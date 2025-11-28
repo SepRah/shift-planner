@@ -1,4 +1,4 @@
-package com.example.backend;
+package com.example.shiftplanner;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
