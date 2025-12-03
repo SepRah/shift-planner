@@ -6,3 +6,4 @@ public enum QualificationLevel {
     SENIOR,         // Senior Level
     JUNIOR          // Junior Level
 }
+
