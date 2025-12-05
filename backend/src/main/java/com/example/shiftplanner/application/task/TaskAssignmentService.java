@@ -8,6 +8,7 @@ import com.example.shiftplanner.application.staff.StaffMemberService;
 import com.example.shiftplanner.domain.staff.StaffMember;
 import com.example.shiftplanner.domain.task.Task;
 import com.example.shiftplanner.domain.task.TaskAssignment;
+import com.example.shiftplanner.exception.AssignmentNotFoundException;
 import com.example.shiftplanner.exception.TaskNotFoundException;
 import com.example.shiftplanner.infrastructure.TaskAssignmentRepository;
 import com.example.shiftplanner.infrastructure.TaskRepository;
@@ -51,7 +52,7 @@ public class TaskAssignmentService {
     // Update Assignment
     public TaskAssignmentResponseDto update(Long id, TaskAssignmentUpdateDto dto) {
         TaskAssignment assignment = assignmentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Assignment not found"));
+                .orElseThrow(AssignmentNotFoundException::new);
 
         if (dto.getTimeRange() != null)
             assignment.setTimeRange(dto.getTimeRange());
@@ -65,7 +66,7 @@ public class TaskAssignmentService {
     // Get single assignment
     public TaskAssignmentResponseDto get(Long id) {
         TaskAssignment assignment = assignmentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Assignment not found"));
+                .orElseThrow(AssignmentNotFoundException::new);
 
         return TaskAssignmentMapper.toDto(assignment);
     }
