@@ -33,6 +33,11 @@ public class TaskMapper {
         return task;
     }
 
+    /**
+     * Update mit TaskUpdateDto eines Tasks.
+     * @param dtoUpdate DTO mit neuen Daten
+     */
+
     public static void updateEntity(Task task, TaskUpdateDto dtoUpdate) {
         if (dtoUpdate == null || task == null) return;
 
@@ -43,6 +48,12 @@ public class TaskMapper {
         if (dtoUpdate.getTaskComplete() != null) task.setCompleted(dtoUpdate.getTaskComplete());
 
     }
+
+    /**
+     * Wandelt eine Task-Entity in ein TaskResponseDTO für die API-Antwort um.
+     * @param task Entity
+     * @return Response DTO
+     */
 
     public static TaskResponseDto toDto(Task task) {
         if (task == null) return null;
