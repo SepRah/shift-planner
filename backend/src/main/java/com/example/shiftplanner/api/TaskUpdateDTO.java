@@ -1,13 +1,16 @@
-package com.example.shiftplanner.domain.task.dto;
+package com.example.shiftplanner.api;
 
 import com.example.shiftplanner.domain.task.QualificationLevel;
 import com.example.shiftplanner.domain.task.TimeRange;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Getter
 @Setter
+@ToString
 
-public class TaskResponseDTO {
+public class TaskUpdateDTO {
+    @NotBlank
     private String taskName;
     private String taskDescription;
     private TimeRange taskTimeRange;
