@@ -2,49 +2,65 @@ package com.example.shiftplanner.domain.task;
 
 import com.example.shiftplanner.domain.staff.Staffmember;
 import jakarta.persistence.*;
+import lombok.*;
+import java.time.Instant;
 
 @Entity
+@Table(name = "tasks")
+@Getter
+@Setter
+@ToString
 public class Task {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(length = 100, nullable = false)
+    private String name;
+
+    @Column(length = 2000, nullable = true)
+    private String description;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private QualificationLevel qualificationLevel;
+
+    @ManyToOne
+    @JoinColumn(name= "employee_id")
+    private Staffmember assignedStaff;
+
     @Embedded
     private TimeRange timeRange;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Staffmember assignedStaff;
+    @Column(nullable = false)
+    private Boolean completed;
 
-    protected Task() {} // Required by JPA
+    @Column(updatable = false)
+    private Instant createdAt;
 
-    public Task(TimeRange timeRange) {
-        if (timeRange == null) {
-            throw new IllegalArgumentException("Time range is required");
-        }
-        this.timeRange = timeRange;
+    @Column
+    private Instant updatedAt;
+
+    public Task() {}
+
+    public Task(String name, String description, QualificationLevel qualificationLevel) {
+        this.name = name;
+        this.description = description;
+        this.qualificationLevel = qualificationLevel;
+        this.completed = false;
+        this.createdAt = Instant.now();
+        this.updatedAt = Instant.now();
     }
 
-    public Long getId() {
-        return id;
+    @PrePersist
+    protected void onCreate() {
+        createdAt = Instant.now();
+        updatedAt = Instant.now();
     }
 
-    public TimeRange getTimeRange() {
-        return timeRange;
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = Instant.now();
     }
-
-    public Staffmember getAssignedStaff() {
-        return assignedStaff;
-    }
-
-    public void assignTo(Staffmember staff) {
-        if (staff == null) {
-            throw new IllegalArgumentException("Staff member is required");
-        }
-        this.assignedStaff = staff;
-    }
-
-//    public boolean overlapsWith(Shift other) {
-//        return this.timeRange.overlapsWith(other.timeRange);
-//    }
 }
