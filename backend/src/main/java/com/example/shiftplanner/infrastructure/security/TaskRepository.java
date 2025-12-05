@@ -1,4 +1,4 @@
-package com.example.shiftplanner.domain.task.repository;
+package com.example.shiftplanner.infrastructure.security;
 
 import com.example.shiftplanner.domain.task.Task;
 import com.example.shiftplanner.domain.task.QualificationLevel;
