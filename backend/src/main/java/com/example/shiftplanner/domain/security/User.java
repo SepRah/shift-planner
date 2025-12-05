@@ -1,7 +1,10 @@
 package com.example.shiftplanner.domain.security;
 
-import com.example.shiftplanner.domain.staff.Staffmember;
+import com.example.shiftplanner.domain.staff.StaffMember;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Set;
@@ -21,12 +24,14 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Set<UserRole> roles;
 
+    @Getter
     private boolean active = true;
 
     private LocalDateTime createdAt = LocalDateTime.now();
+    @Setter
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "staff_id")
-    private Staffmember staffmember;
+    private StaffMember staffmember;
 
     protected User() {} // JPA requirement
 
@@ -45,15 +50,8 @@ public class User {
         this.active = false;
     }
 
-    public boolean isActive() {
-        return active;
-    }
-
     public Collection<UserRole> getRoles() {
         return  roles;
     }
 
-    public void setStaffmember(Staffmember staffmember) {
-        this.staffmember = staffmember;
-    }
 }
