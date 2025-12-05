@@ -2,22 +2,21 @@ package com.example.shiftplanner.api.task.dto;
 
 import com.example.shiftplanner.domain.staff.QualificationLevel;
 import com.example.shiftplanner.domain.task.TimeRange;
-import jakarta.validation.constraints.NotBlank;
-import lombok.*;
 
-@Getter
-@Setter
-@ToString
+import java.time.Instant;
 
-/**
- * Data Transfer Object für die Erstellung einer Aufgabe.
- * */
+public class TaskAssignmentResponseDto {
 
-public class TaskCreateDto {
-    @NotBlank
+    private Long taskId;
     private String taskName;
     private String taskDescription;
-    private TimeRange taskTimeRange;
     private QualificationLevel taskQualificationLevel;
-    private Boolean taskComplete;
+    private Instant taskCreatedAt;
+    private Instant taskUpdatedAt;
+
+    private Long staffId;
+    private String staffName;
+    private TimeRange timeRange;
+    private Boolean completed;
+
 }
