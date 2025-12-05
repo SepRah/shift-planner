@@ -1,7 +1,9 @@
 package com.example.shiftplanner.domain.staff;
 
 import jakarta.persistence.Embeddable;
+import lombok.Getter;
 
+@Getter
 @Embeddable
 public class Name {
     private String firstName;
@@ -10,10 +12,10 @@ public class Name {
     protected Name() {}
 
     public Name(String firstName, String lastName) {
-        if (firstName == null || firstName.isBlank()) {
+        if (firstName.isBlank() || firstName.isEmpty() ) {
             throw new IllegalArgumentException("First name is required");
         }
-        if (lastName == null || lastName.isBlank()) {
+        if (lastName.isEmpty() || lastName.isBlank()) {
             throw new IllegalArgumentException("Last name is required");
         }
         this.firstName = firstName;
