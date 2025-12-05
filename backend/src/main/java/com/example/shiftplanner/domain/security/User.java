@@ -1,8 +1,9 @@
 package com.example.shiftplanner.domain.security;
 
-import com.example.shiftplanner.domain.staff.StaffMember;
+import com.example.shiftplanner.domain.staff.Staffmember;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Set;
 
 @Entity
@@ -23,8 +24,9 @@ public class User {
     private boolean active = true;
 
     private LocalDateTime createdAt = LocalDateTime.now();
-    @OneToOne
-    private StaffMember staffMember;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "staff_id")
+    private Staffmember staffmember;
 
     protected User() {} // JPA requirement
 
@@ -45,5 +47,13 @@ public class User {
 
     public boolean isActive() {
         return active;
+    }
+
+    public Collection<UserRole> getRoles() {
+        return  roles;
+    }
+
+    public void setStaffmember(Staffmember staffmember) {
+        this.staffmember = staffmember;
     }
 }
