@@ -1,4 +1,4 @@
-package com.example.shiftplanner.api.security;
+package com.example.shiftplanner.api.security.dto;
 
 import com.example.shiftplanner.api.staff.dto.StaffMemberDTO;
 import com.example.shiftplanner.domain.security.UserRole;
