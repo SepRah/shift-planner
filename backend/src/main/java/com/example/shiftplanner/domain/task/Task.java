@@ -33,6 +33,9 @@ public class Task {
     @Embedded
     private TimeRange timeRange;
 
+    @Column(nullable = false)
+    private Boolean completed;
+
     @Column(updatable = false)
     private Instant createdAt;
 
@@ -45,6 +48,7 @@ public class Task {
         this.name = name;
         this.description = description;
         this.qualificationLevel = qualificationLevel;
+        this.completed = false;
         this.createdAt = Instant.now();
         this.updatedAt = Instant.now();
     }
