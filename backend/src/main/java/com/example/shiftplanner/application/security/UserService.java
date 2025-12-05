@@ -2,7 +2,10 @@ package com.example.shiftplanner.application.security;
 
 import com.example.shiftplanner.domain.security.User;
 import com.example.shiftplanner.domain.security.UserRole;
-import com.example.shiftplanner.domain.staff.Staffmember;
+import com.example.shiftplanner.domain.staff.Name;
+import com.example.shiftplanner.domain.staff.Role;
+import com.example.shiftplanner.domain.staff.StaffMember;
+
 import com.example.shiftplanner.infrastructure.security.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,8 +33,8 @@ public class UserService {
     public User registerUser(String username,
                              String rawPassword,
                              String firstName,
-                             String lastName
-//                             ,StaffRole staffRole
+                             String lastName,
+                             double fte
     ) {
 
         if (userRepository.existsByUsername(username)) {
@@ -45,10 +48,10 @@ public class UserService {
         String encodedPassword = passwordEncoder.encode(rawPassword);
 
         // Create Staffmember linked to user
-//        Staffmember staffmember = new Staffmember(firstName, lastName, staffRole);
+        StaffMember staffmember = new StaffMember(new Name(firstName, lastName), staffRole, fte);
 
         User user = new User(username, encodedPassword, Set.of(UserRole.USER));
-//        user.setStaffmember(staffmember);
+        user.setStaffmember(staffmember);
 
         return userRepository.save(user);
     }
@@ -93,14 +96,15 @@ public class UserService {
     protected User registerAdminUser(String username,
                                      String rawPassword,
                                      String firstName,
-                                     String lastName) {
+                                     String lastName,
+                                     double fte) {
 
         if (userRepository.existsByUsername(username)) {
             throw new IllegalArgumentException("Admin username already exists");
         }
 
         String encoded = passwordEncoder.encode(rawPassword);
-        Staffmember staff = new Staffmember(firstName, lastName, StaffRole.MANAGER);
+        StaffMember staff = new StaffMember(new Name(firstName, lastName), new Role(), fte);
 
         User admin = new User(username, encoded, Set.of(UserRole.ADMIN));
         admin.setStaffmember(staff);
