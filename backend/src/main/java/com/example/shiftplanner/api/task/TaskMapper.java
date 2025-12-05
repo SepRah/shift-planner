@@ -1,4 +1,4 @@
-package com.example.shiftplanner.domain.task.mapper;
+package com.example.shiftplanner.api.task;
 
 import com.example.shiftplanner.domain.task.Task;
 import com.example.shiftplanner.domain.staff.StaffMember;
@@ -17,10 +17,8 @@ public class TaskMapper {
         task.setTimeRange(dtoCreate.getTaskTimeRange());
         task.setCompleted(false);
 
-        if (dtoCreate.getTaskEmployeeId() != null) {
-            StaffMember staff = new StaffMember();
-            staff.setId(dtoCreate.getTaskEmployeeId());
-            task.setAssignedStaff(staff);
+        if (task.getAssignedStaff() != null) {
+            dtoCreate.setTaskEmployeeId(task.getAssignedStaff().getId());
         }
 
         return task;
@@ -35,10 +33,8 @@ public class TaskMapper {
         if (dtoUpdate.getTaskTimeRange() != null) task.setTimeRange(dtoUpdate.getTaskTimeRange());
         if (dtoUpdate.getTaskComplete() != null) task.setCompleted(dtoUpdate.getTaskComplete());
 
-        if (dtoUpdate.getTaskEmployeeId() != null) {
-            StaffMember staff = new StaffMember();
-            staff.setId(dtoUpdate.getTaskEmployeeId());
-            task.setAssignedStaff(staff);
+        if (task.getAssignedStaff() != null) {
+            dtoUpdate.setTaskEmployeeId(task.getAssignedStaff().getId());
         }
     }
 

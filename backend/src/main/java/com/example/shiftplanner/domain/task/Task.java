@@ -1,6 +1,6 @@
 package com.example.shiftplanner.domain.task;
 
-import com.example.shiftplanner.domain.staff.Staffmember;
+import com.example.shiftplanner.domain.staff.StaffMember;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.Instant;
@@ -28,7 +28,7 @@ public class Task {
 
     @ManyToOne
     @JoinColumn(name= "employee_id")
-    private Staffmember assignedStaff;
+    private StaffMember assignedStaff;
 
     @Embedded
     private TimeRange timeRange;
