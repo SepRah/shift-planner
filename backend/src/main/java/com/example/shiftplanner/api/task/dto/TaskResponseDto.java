@@ -15,7 +15,7 @@ public class TaskResponseDto {
     private String taskName;
     private String taskDescription;
     private TimeRange taskTimeRange;
-    private Long taskEmployeeId;
+    private Long taskStaffId;
     private QualificationLevel taskQualificationLevel;
     private Boolean taskComplete;
 }

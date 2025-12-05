@@ -66,7 +66,7 @@ public class TaskMapper {
         dtoResponse.setTaskComplete(task.getCompleted());
 
         if (task.getAssignedStaff() != null) {
-            dtoResponse.setTaskEmployeeId(task.getAssignedStaff().getId());
+            dtoResponse.setTaskStaffId(task.getAssignedStaff().getId());
         }
 
         return dtoResponse;

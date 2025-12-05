@@ -32,7 +32,7 @@ public class Task {
     private QualificationLevel qualificationLevel;
 
     @ManyToOne
-    @JoinColumn(name= "employee_id")
+    @JoinColumn(name= "staff_id")
     private StaffMember assignedStaff;
 
     @Embedded
