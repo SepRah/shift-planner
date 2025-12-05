@@ -1,7 +1,6 @@
 package com.example.shiftplanner.api.task.dto;
 
 import com.example.shiftplanner.domain.staff.QualificationLevel;
-import com.example.shiftplanner.domain.task.TimeRange;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
@@ -17,7 +16,5 @@ public class TaskCreateDto {
     @NotBlank
     private String taskName;
     private String taskDescription;
-    private TimeRange taskTimeRange;
     private QualificationLevel taskQualificationLevel;
-    private Boolean taskComplete;
 }

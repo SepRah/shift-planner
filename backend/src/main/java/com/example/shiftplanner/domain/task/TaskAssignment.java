@@ -40,6 +40,7 @@ public class TaskAssignment {
         this.task = task;
         this.assignedStaff = assignedStaff;
         this.completed = false;
+        this.createdAt = Instant.now();
         this.updatedAt = Instant.now();
     }
 

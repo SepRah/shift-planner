@@ -20,7 +20,6 @@ public class TaskAssignmentResponseDto {
     private Instant taskUpdatedAt;
 
     private Long staffId;
-    private String staffName;
     private TimeRange timeRange;
     private Boolean completed;
 

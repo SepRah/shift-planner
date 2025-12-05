@@ -12,7 +12,6 @@ public class TaskAssignmentMapper {
 
         dto.setId(assignment.getId());
         dto.setStaffId(assignment.getAssignedStaff().getId());
-        dto.setStaffName(assignment.getAssignedStaff().getName());
         dto.setTimeRange(assignment.getTimeRange());
         dto.setCompleted(assignment.getCompleted());
 
