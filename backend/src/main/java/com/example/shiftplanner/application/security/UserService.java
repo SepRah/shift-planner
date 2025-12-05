@@ -1,5 +1,8 @@
 package com.example.shiftplanner.application.security;
 
+import com.example.shiftplanner.api.security.UserMapper;
+import com.example.shiftplanner.api.security.dto.ChangePasswordRequestDTO;
+import com.example.shiftplanner.api.security.dto.UserRegistrationRequestDTO;
 import com.example.shiftplanner.domain.security.User;
 import com.example.shiftplanner.domain.security.UserRole;
 import com.example.shiftplanner.domain.staff.Name;
@@ -20,11 +23,20 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public UserService(UserRepository userRepository,
-//                       StaffmemberRepository staffmemberRepository,
+                       StaffmemberRepository staffmemberRepository,
                        PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-//        this.staffmemberRepository = staffmemberRepository;
+        this.staffmemberRepository = staffmemberRepository;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    /**
+     * Registers a new default user.
+     */
+    public User registerDefaultUser(UserRegistrationRequestDTO dto) {
+        String encodedPassword = passwordEncoder.encode(dto.password());
+        User user = UserMapper.toEntity(dto, encodedPassword);
+        return userRepository.save(user);
     }
 
     /**
@@ -41,9 +53,9 @@ public class UserService {
             throw new IllegalArgumentException("Username already taken");
         }
 
-//        if (staffmemberRepository.existsByFirstNameAndLastName(firstName, lastName)) {
-//            throw new IllegalArgumentException("Staffmember already exists");
-//        }
+        if (staffmemberRepository.existsByFirstNameAndLastName(firstName, lastName)) {
+            throw new IllegalArgumentException("Staffmember already exists");
+        }
 
         String encodedPassword = passwordEncoder.encode(rawPassword);
 
@@ -54,6 +66,28 @@ public class UserService {
         user.setStaffmember(staffmember);
 
         return userRepository.save(user);
+    }
+
+    // ----------------------------
+    // Private admin creation method
+    // ----------------------------
+    protected void registerAdminUser(String username,
+                                     String rawPassword,
+                                     String firstName,
+                                     String lastName,
+                                     double fte) {
+
+        if (userRepository.existsByUsername(username)) {
+            throw new IllegalArgumentException("Admin username already exists");
+        }
+
+        String encoded = passwordEncoder.encode(rawPassword);
+        StaffMember staff = new StaffMember(new Name(firstName, lastName), new Role(), fte);
+
+        User admin = new User(username, encoded, Set.of(UserRole.ADMIN));
+        admin.setStaffmember(staff);
+
+        userRepository.save(admin);
     }
 
     /**
@@ -77,9 +111,9 @@ public class UserService {
         return userRepository.existsByUsername(username);
     }
 
-//    public boolean staffExists(String firstName, String lastName) {
-//        return staffmemberRepository.existsByFirstNameAndLastName(firstName, lastName);
-//    }
+    public boolean staffExists(String firstName, String lastName) {
+        return staffmemberRepository.existsByFirstNameAndLastName(firstName, lastName);
+    }
 
 
     /**
@@ -90,25 +124,15 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
     }
 
-    // ----------------------------
-    // Private admin creation method
-    // ----------------------------
-    protected User registerAdminUser(String username,
-                                     String rawPassword,
-                                     String firstName,
-                                     String lastName,
-                                     double fte) {
 
-        if (userRepository.existsByUsername(username)) {
-            throw new IllegalArgumentException("Admin username already exists");
+    public void changePassword(String username, ChangePasswordRequestDTO dto) {
+        User user = findByUsername(username);
+
+        if (!passwordEncoder.matches(dto.oldPassword(), user.getPasswordHash())) {
+            throw new IllegalArgumentException("Old password is incorrect");
         }
 
-        String encoded = passwordEncoder.encode(rawPassword);
-        StaffMember staff = new StaffMember(new Name(firstName, lastName), new Role(), fte);
-
-        User admin = new User(username, encoded, Set.of(UserRole.ADMIN));
-        admin.setStaffmember(staff);
-
-        return userRepository.save(admin);
+        user.setPasswordHash(passwordEncoder.encode(dto.newPassword()));
+        userRepository.save(user);
     }
 }

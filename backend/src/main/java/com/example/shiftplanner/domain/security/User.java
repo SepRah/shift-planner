@@ -13,11 +13,16 @@ import java.util.Set;
 public class User {
 
     @Id
+    @Getter
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Getter
+    @Setter
     private String username;
 
+    @Getter
+    @Setter
     private String passwordHash;
 
     @ElementCollection(fetch = FetchType.EAGER)
@@ -28,7 +33,9 @@ public class User {
     private boolean active = true;
 
     private LocalDateTime createdAt = LocalDateTime.now();
+
     @Setter
+    @Getter
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "staff_id")
     private StaffMember staffmember;
@@ -39,6 +46,16 @@ public class User {
         this.username = username;
         this.passwordHash = passwordHash;
         this.roles = roles;
+    }
+
+    // Factory
+    public static User create(String username, String password, Set<UserRole> roles, StaffMember staffmember) {
+        User user = new User();
+        user.username = username;
+        user.passwordHash = password;
+        user.roles = roles;
+        user.staffmember = staffmember;
+        return user;
     }
 
     // Getters & behavior
@@ -53,5 +70,6 @@ public class User {
     public Collection<UserRole> getRoles() {
         return  roles;
     }
+
 
 }
