@@ -2,10 +2,15 @@ package com.example.shiftplanner.api.task.dto;
 
 import com.example.shiftplanner.domain.staff.QualificationLevel;
 import com.example.shiftplanner.domain.task.TimeRange;
-
+import lombok.*;
 import java.time.Instant;
 
+@Getter
+@Setter
+
 public class TaskAssignmentResponseDto {
+
+    private Long id;
 
     private Long taskId;
     private String taskName;
