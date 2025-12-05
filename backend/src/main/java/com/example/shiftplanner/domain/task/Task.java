@@ -1,10 +1,13 @@
 package com.example.shiftplanner.domain.task;
 
 import com.example.shiftplanner.domain.staff.QualificationLevel;
-import com.example.shiftplanner.domain.staff.StaffMember;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.Instant;
+
+@Getter
+@Setter
+@ToString
 
 /**
  * Entity-Klasse für eine Aufgabe im Schichtplaner, die einem Mitarbeiter (staff) zugewiesen werden kann,
@@ -13,9 +16,6 @@ import java.time.Instant;
 
 @Entity
 @Table(name = "tasks")
-@Getter
-@Setter
-@ToString
 public class Task {
 
     @Id
@@ -31,10 +31,6 @@ public class Task {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private QualificationLevel qualificationLevel;
-
-    @ManyToOne
-    @JoinColumn(name= "staff_id")
-    private StaffMember assignedStaff;
 
     @Embedded
     private TimeRange timeRange;

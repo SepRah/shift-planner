@@ -18,7 +18,6 @@ public class TaskUpdateDto {
     private String taskName;
     private String taskDescription;
     private TimeRange taskTimeRange;
-    private Long taskStaffId;
     private QualificationLevel taskQualificationLevel;
     private Boolean taskComplete;
 }
