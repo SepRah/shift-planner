@@ -5,6 +5,11 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.Instant;
 
+/**
+ * Entity-Klasse für eine Aufgabe im Schichtplaner, die einem Mitarbeiter (staff) zugewiesen werden kann,
+ * eine Mindestqualifikation hat, und neben Titel und Beschreibung auch einen Zeitbereich besitzt.
+ */
+
 @Entity
 @Table(name = "tasks")
 @Getter

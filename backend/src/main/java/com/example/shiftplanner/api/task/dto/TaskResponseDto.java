@@ -7,6 +7,10 @@ import lombok.*;
 @Getter
 @Setter
 
+/**
+ * Data Transfer Object für die Ausgabe einer Aufgabe.
+ * */
+
 public class TaskResponseDto {
     private String taskName;
     private String taskDescription;

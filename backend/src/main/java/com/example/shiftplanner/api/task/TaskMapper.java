@@ -6,7 +6,20 @@ import com.example.shiftplanner.api.task.dto.TaskCreateDto;
 import com.example.shiftplanner.api.task.dto.TaskUpdateDto;
 import com.example.shiftplanner.api.task.dto.TaskResponseDto;
 
+/**
+ * Mapper-Klasse für Task-Entity und DTOs.
+ * Wandelt TaskCreateDto/TaskUpdateDto in Task-Entity um und
+ * Task-Entity in TaskResponseDto.
+ */
+
 public class TaskMapper {
+
+    /**
+     * Wandelt ein TaskCreateDto in eine neue Task-Entity um.
+     * @param dtoCreate DTO mit Eingabedaten
+     * @return neue Task-Entity
+     */
+
     public static Task toEntity(TaskCreateDto dtoCreate) {
         if (dtoCreate == null) return null;
 
@@ -16,10 +29,6 @@ public class TaskMapper {
         task.setQualificationLevel(dtoCreate.getTaskQualificationLevel());
         task.setTimeRange(dtoCreate.getTaskTimeRange());
         task.setCompleted(false);
-
-        if (task.getAssignedStaff() != null) {
-            dtoCreate.setTaskEmployeeId(task.getAssignedStaff().getId());
-        }
 
         return task;
     }
@@ -33,9 +42,6 @@ public class TaskMapper {
         if (dtoUpdate.getTaskTimeRange() != null) task.setTimeRange(dtoUpdate.getTaskTimeRange());
         if (dtoUpdate.getTaskComplete() != null) task.setCompleted(dtoUpdate.getTaskComplete());
 
-        if (task.getAssignedStaff() != null) {
-            dtoUpdate.setTaskEmployeeId(task.getAssignedStaff().getId());
-        }
     }
 
     public static TaskResponseDto toDto(Task task) {

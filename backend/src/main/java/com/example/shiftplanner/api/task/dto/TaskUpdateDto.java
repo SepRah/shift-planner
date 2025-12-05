@@ -9,6 +9,10 @@ import lombok.*;
 @Setter
 @ToString
 
+/**
+ * Data Transfer Object für das Updaten einer Aufgabe.
+ * */
+
 public class TaskUpdateDto {
     @NotBlank
     private String taskName;

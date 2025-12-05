@@ -4,6 +4,10 @@ import jakarta.persistence.Embeddable;
 import java.time.Instant;
 import lombok.*;
 
+/**
+ * Eingebettete Klasse für einen Zeitbereich einer Aufgabe.
+ * Wird in der Task-Entity eingebettet, sobald die Aufgabe im Schichtplaner ist.
+ */
 
 @Getter
 @Setter
