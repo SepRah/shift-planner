@@ -1,4 +1,4 @@
-package com.example.shiftplanner.api.task;
+package com.example.shiftplanner.api.task.dto;
 
 import com.example.shiftplanner.domain.task.QualificationLevel;
 import com.example.shiftplanner.domain.task.TimeRange;

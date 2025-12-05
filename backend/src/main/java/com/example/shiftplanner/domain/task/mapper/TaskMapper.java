@@ -1,10 +1,10 @@
 package com.example.shiftplanner.domain.task.mapper;
 
 import com.example.shiftplanner.domain.task.Task;
-import com.example.shiftplanner.domain.staff.Staffmember;
-import com.example.shiftplanner.api.task.TaskCreateDto;
-import com.example.shiftplanner.api.task.TaskUpdateDto;
-import com.example.shiftplanner.api.task.TaskResponseDto;
+import com.example.shiftplanner.domain.staff.StaffMember;
+import com.example.shiftplanner.api.task.dto.TaskCreateDto;
+import com.example.shiftplanner.api.task.dto.TaskUpdateDto;
+import com.example.shiftplanner.api.task.dto.TaskResponseDto;
 
 public class TaskMapper {
     public static Task toEntity(TaskCreateDto dtoCreate) {
@@ -18,7 +18,7 @@ public class TaskMapper {
         task.setCompleted(false);
 
         if (dtoCreate.getTaskEmployeeId() != null) {
-            Staffmember staff = new Staffmember();
+            StaffMember staff = new StaffMember();
             staff.setId(dtoCreate.getTaskEmployeeId());
             task.setAssignedStaff(staff);
         }
@@ -36,7 +36,7 @@ public class TaskMapper {
         if (dtoUpdate.getTaskComplete() != null) task.setCompleted(dtoUpdate.getTaskComplete());
 
         if (dtoUpdate.getTaskEmployeeId() != null) {
-            Staffmember staff = new Staffmember();
+            StaffMember staff = new StaffMember();
             staff.setId(dtoUpdate.getTaskEmployeeId());
             task.setAssignedStaff(staff);
         }
