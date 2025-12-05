@@ -6,7 +6,7 @@ import com.example.shiftplanner.domain.staff.Name;
 import com.example.shiftplanner.domain.staff.Role;
 import com.example.shiftplanner.domain.staff.StaffMember;
 
-import com.example.shiftplanner.infrastructure.security.UserRepository;
+import com.example.shiftplanner.infrastructure.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

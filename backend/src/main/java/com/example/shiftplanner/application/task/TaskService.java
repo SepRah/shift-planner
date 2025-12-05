@@ -5,7 +5,7 @@ import com.example.shiftplanner.api.task.dto.TaskCreateDto;
 import com.example.shiftplanner.api.task.dto.TaskResponseDto;
 import com.example.shiftplanner.application.staff.StaffMemberService;
 import com.example.shiftplanner.domain.task.Task;
-import com.example.shiftplanner.infrastructure.security.TaskRepository;
+import com.example.shiftplanner.infrastructure.TaskRepository;
 
 public class TaskService {
 
