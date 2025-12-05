@@ -1,6 +1,6 @@
 package com.example.shiftplanner.domain.security;
 
-import com.example.shiftplanner.domain.staff.Staffmember;
+import com.example.shiftplanner.domain.staff.StaffMember;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -24,7 +24,7 @@ public class User {
 
     private LocalDateTime createdAt = LocalDateTime.now();
     @OneToOne
-    private Staffmember staffMember;
+    private StaffMember staffMember;
 
     protected User() {} // JPA requirement
 

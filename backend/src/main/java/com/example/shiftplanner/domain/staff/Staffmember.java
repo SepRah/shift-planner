@@ -4,7 +4,7 @@ import com.example.shiftplanner.domain.task.Task;
 import jakarta.persistence.*;
 
 @Entity
-public class Staffmember {
+public class StaffMember {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -14,15 +14,18 @@ public class Staffmember {
 
     @ManyToOne
     private Role role;     // Role is another domain class
+    private double fte;    // Full-time equivalent
 
-    protected void StaffMember() {} // Required by JPA
+    protected StaffMember() {} // Required by JPA
 
-    public void StaffMember(Name name, Role role) {
+    public StaffMember (Name name, Role role, double fte) {
         if (name == null) throw new IllegalArgumentException("Name is required");
         if (role == null) throw new IllegalArgumentException("Role is required");
+        if (fte < 0.0 || fte > 1.0 ) throw new IllegalArgumentException("FTE must be between 0.0 and 1.0");
 
         this.name = name;
         this.role = role;
+        this.fte = fte;
     }
 
     public Long getId() {
@@ -36,6 +39,7 @@ public class Staffmember {
     public Role getRole() {
         return role;
     }
+    public double getFte() { return fte; }
     public boolean can(Permission permission) {
         return role.hasPermission(permission);
     }
