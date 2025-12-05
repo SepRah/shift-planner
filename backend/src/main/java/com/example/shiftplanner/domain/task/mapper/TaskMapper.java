@@ -2,9 +2,9 @@ package com.example.shiftplanner.domain.task.mapper;
 
 import com.example.shiftplanner.domain.task.Task;
 import com.example.shiftplanner.domain.staff.Staffmember;
-import com.example.shiftplanner.domain.task.dto.TaskCreateDTO;
-import com.example.shiftplanner.domain.task.dto.TaskUpdateDTO;
-import com.example.shiftplanner.domain.task.dto.TaskResponseDTO;
+import com.example.shiftplanner.api.TaskCreateDTO;
+import com.example.shiftplanner.api.TaskUpdateDTO;
+import com.example.shiftplanner.api.TaskResponseDTO;
 
 public class TaskMapper {
     public static Task toEntity(TaskCreateDTO dtoCreate) {
