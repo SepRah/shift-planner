@@ -1,5 +1,6 @@
 package com.example.shiftplanner.domain.task;
 
+import com.example.shiftplanner.domain.staff.QualificationLevel;
 import com.example.shiftplanner.domain.staff.StaffMember;
 import jakarta.persistence.*;
 import lombok.*;

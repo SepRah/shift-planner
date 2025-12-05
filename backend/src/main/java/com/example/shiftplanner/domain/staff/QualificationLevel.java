@@ -1,4 +1,4 @@
-package com.example.shiftplanner.domain.task;
+package com.example.shiftplanner.domain.staff;
 
 public enum QualificationLevel {
     NONE,           // Nothing required

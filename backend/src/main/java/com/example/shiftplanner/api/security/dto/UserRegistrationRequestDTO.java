@@ -1,6 +1,6 @@
 package com.example.shiftplanner.api.security.dto;
 
-import com.example.shiftplanner.domain.task.QualificationLevel;
+import com.example.shiftplanner.domain.staff.QualificationLevel;
 
 public record UserRegistrationRequestDTO(
         String username,

@@ -1,7 +1,7 @@
 package com.example.shiftplanner.infrastructure.security;
 
 import com.example.shiftplanner.domain.task.Task;
-import com.example.shiftplanner.domain.task.QualificationLevel;
+import com.example.shiftplanner.domain.staff.QualificationLevel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
