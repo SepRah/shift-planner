@@ -8,12 +8,9 @@ import java.util.List;
 public interface TaskRepository extends JpaRepository<Task, Long> {
 
     List<Task> findByTaskId(Long taskId);
-
     List<Task> findByAssignedStaffId(Long assignedStaffId);
-
     List<Task> findByCompletedFalse();
-
     List<Task> findByQualificationLevel(QualificationLevel level);
-
     List<Task> findByName(String name);
+    
 }
