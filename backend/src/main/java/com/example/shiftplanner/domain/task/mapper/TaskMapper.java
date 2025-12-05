@@ -2,12 +2,12 @@ package com.example.shiftplanner.domain.task.mapper;
 
 import com.example.shiftplanner.domain.task.Task;
 import com.example.shiftplanner.domain.staff.Staffmember;
-import com.example.shiftplanner.api.TaskCreateDTO;
-import com.example.shiftplanner.api.TaskUpdateDTO;
-import com.example.shiftplanner.api.TaskResponseDTO;
+import com.example.shiftplanner.api.task.TaskCreateDto;
+import com.example.shiftplanner.api.task.TaskUpdateDto;
+import com.example.shiftplanner.api.task.TaskResponseDto;
 
 public class TaskMapper {
-    public static Task toEntity(TaskCreateDTO dtoCreate) {
+    public static Task toEntity(TaskCreateDto dtoCreate) {
         if (dtoCreate == null) return null;
 
         Task task = new Task();
@@ -26,7 +26,7 @@ public class TaskMapper {
         return task;
     }
 
-    public static void updateEntity(Task task, TaskUpdateDTO dtoUpdate) {
+    public static void updateEntity(Task task, TaskUpdateDto dtoUpdate) {
         if (dtoUpdate == null || task == null) return;
 
         if (dtoUpdate.getTaskName() != null) task.setName(dtoUpdate.getTaskName());
@@ -42,10 +42,10 @@ public class TaskMapper {
         }
     }
 
-    public static TaskResponseDTO toDto(Task task) {
+    public static TaskResponseDto toDto(Task task) {
         if (task == null) return null;
 
-        TaskResponseDTO dtoResponse = new TaskResponseDTO();
+        TaskResponseDto dtoResponse = new TaskResponseDto();
         dtoResponse.setTaskName(task.getName());
         dtoResponse.setTaskDescription(task.getDescription());
         dtoResponse.setTaskTimeRange(task.getTimeRange());
