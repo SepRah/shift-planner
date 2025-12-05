@@ -3,18 +3,17 @@ package com.example.shiftplanner.application.task;
 import com.example.shiftplanner.api.task.TaskMapper;
 import com.example.shiftplanner.api.task.dto.TaskCreateDto;
 import com.example.shiftplanner.api.task.dto.TaskResponseDto;
-import com.example.shiftplanner.application.staff.StaffMemberService;
 import com.example.shiftplanner.domain.task.Task;
 import com.example.shiftplanner.infrastructure.TaskRepository;
+import org.springframework.stereotype.Service;
 
+@Service
 public class TaskService {
 
     private final TaskRepository taskRepository;
-    private final StaffMemberService staffMemberService;
 
-    public TaskService(TaskRepository taskRepository, StaffMemberService staffMemberService) {
+    public TaskService(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
-        this.staffMemberService = staffMemberService;
     }
 
     public TaskResponseDto create(TaskCreateDto dto) {
@@ -22,7 +21,4 @@ public class TaskService {
         task = taskRepository.save(task);
         return TaskMapper.toDto(task);
     }
-
-
-
 }
