@@ -39,6 +39,8 @@ public class SecurityConfig {
                         .requestMatchers("/user/**")
                         .hasAnyRole("USER", "ADMIN", "SYSTEM_ADMIN")
 
+                        .requestMatchers("/auth/change-password").authenticated()
+
                         // Everything else must be authenticated
                         .anyRequest().authenticated()
                 )
