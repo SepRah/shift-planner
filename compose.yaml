@@ -6,6 +6,8 @@ services:
       - 'MYSQL_PASSWORD=secret'
       - 'MYSQL_ROOT_PASSWORD=verysecret'
       - 'MYSQL_USER=myuser'
+      - 'JWT_SECRET=supersecureproductionkey1234567890'
+      - 'JWT_EXPIRATION=86400000'
     ports:
       - '3306'
   backend:

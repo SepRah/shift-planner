@@ -6,9 +6,11 @@ import com.example.shiftplanner.api.security.dto.UserRegistrationRequestDTO;
 import com.example.shiftplanner.domain.security.User;
 import com.example.shiftplanner.domain.security.UserRole;
 import com.example.shiftplanner.domain.staff.Name;
-import com.example.shiftplanner.domain.staff.Role;
+import com.example.shiftplanner.domain.staff.QualificationLevel;
 import com.example.shiftplanner.domain.staff.StaffMember;
 
+import com.example.shiftplanner.exception.InvalidPasswordException;
+import com.example.shiftplanner.infrastructure.StaffMemberRepository;
 import com.example.shiftplanner.infrastructure.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,11 +21,11 @@ import java.util.Set;
 public class UserService {
 
     private final UserRepository userRepository;
-//    private final StaffmemberRepository staffmemberRepository;
+    private final StaffMemberRepository staffmemberRepository;
     private final PasswordEncoder passwordEncoder;
 
     public UserService(UserRepository userRepository,
-                       StaffmemberRepository staffmemberRepository,
+                       StaffMemberRepository staffmemberRepository,
                        PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.staffmemberRepository = staffmemberRepository;
@@ -53,14 +55,14 @@ public class UserService {
             throw new IllegalArgumentException("Username already taken");
         }
 
-        if (staffmemberRepository.existsByFirstNameAndLastName(firstName, lastName)) {
+        if (staffmemberRepository.existsByNameFirstNameAndNameLastName(firstName, lastName)) {
             throw new IllegalArgumentException("Staffmember already exists");
         }
 
         String encodedPassword = passwordEncoder.encode(rawPassword);
 
         // Create Staffmember linked to user
-        StaffMember staffmember = new StaffMember(new Name(firstName, lastName), staffRole, fte);
+        StaffMember staffmember = new StaffMember(new Name(firstName, lastName), QualificationLevel.NONE, fte);
 
         User user = new User(username, encodedPassword, Set.of(UserRole.USER));
         user.setStaffmember(staffmember);
@@ -82,7 +84,7 @@ public class UserService {
         }
 
         String encoded = passwordEncoder.encode(rawPassword);
-        StaffMember staff = new StaffMember(new Name(firstName, lastName), new Role(), fte);
+        StaffMember staff = new StaffMember(new Name(firstName, lastName), QualificationLevel.MANAGER, fte);
 
         User admin = new User(username, encoded, Set.of(UserRole.ADMIN));
         admin.setStaffmember(staff);
@@ -107,14 +109,16 @@ public class UserService {
         return userRepository.save(targetUser);
     }
 
+    /**
+     * Checks if a username exits
+     */
     public boolean usernameExists(String username) {
         return userRepository.existsByUsername(username);
     }
 
     public boolean staffExists(String firstName, String lastName) {
-        return staffmemberRepository.existsByFirstNameAndLastName(firstName, lastName);
+        return staffmemberRepository.existsByNameFirstNameAndNameLastName(firstName, lastName);
     }
-
 
     /**
      * Lookup user by username (used by controllers or other services).
@@ -124,12 +128,14 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
     }
 
-
+    /**
+     * Lets the user change its password.
+     */
     public void changePassword(String username, ChangePasswordRequestDTO dto) {
         User user = findByUsername(username);
 
         if (!passwordEncoder.matches(dto.oldPassword(), user.getPasswordHash())) {
-            throw new IllegalArgumentException("Old password is incorrect");
+            throw new InvalidPasswordException("Old password is incorrect");
         }
 
         user.setPasswordHash(passwordEncoder.encode(dto.newPassword()));

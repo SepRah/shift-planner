@@ -39,7 +39,7 @@ public class AuthenticationService {
                 dto.username(),
                 hashedPassword,
                 Set.of(UserRole.USER),
-                new StaffMember.create() // You will fill this later
+                new StaffMember.create()
         );
 
         userRepository.save(user);

@@ -41,9 +41,9 @@ public class AuthController {
     // Login (returns JWT or session token)
     // ---------------------------
     @PostMapping("/login")
-    public ResponseEntity<AuthTokenDTO> login(@RequestBody UserLoginRequestDTO dto) {
+    public ResponseEntity<AuthenticationResponse> login(@RequestBody UserLoginRequestDTO dto) {
 
-        AuthTokenDTO token = authenticationService.login(dto);
+        AuthenticationResponse token = authenticationService.login(dto);
 
         return ResponseEntity.ok(token);
     }
