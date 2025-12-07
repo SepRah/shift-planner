@@ -3,8 +3,22 @@ package com.example.shiftplanner.api.staff.dto;
 import com.example.shiftplanner.domain.staff.QualificationLevel;
 import jakarta.validation.constraints.NotBlank;
 
+/**
+ * Data Transfer Object used to return a {@link com.example.shiftplanner.domain.staff.StaffMember}
+ * from the API to the client.
+ * <p>
+ * Characteristics:
+ * <ul>
+ *   <li>Sent <strong>from the server to the client</strong>.</li>
+ *   <li>Contains only externally visible, API-safe values.</li>
+ *   <li>Always includes the generated {@code id}.</li>
+ *   <li>Does not expose internal domain structures such as value objects.</li>
+ * </ul>
+ * <p>
+ * This DTO is produced by {@code StaffMemberMapper.toDto()} and typically used in
+ * GET, POST, PATCH, and DELETE responses.
+ */
 public record StaffMemberResponseDTO(
-        @NotBlank
         Long id,
         String firstName,
         String lastName,
