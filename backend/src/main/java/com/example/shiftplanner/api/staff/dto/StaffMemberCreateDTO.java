@@ -2,6 +2,7 @@ package com.example.shiftplanner.api.staff.dto;
 
 import com.example.shiftplanner.domain.staff.QualificationLevel;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * Data Transfer Object used for creating a new {@link com.example.shiftplanner.domain.staff.StaffMember}.
@@ -20,9 +21,11 @@ import jakarta.validation.constraints.NotBlank;
  * </ul>
  */
 public record StaffMemberCreateDTO(
+        @NotNull
         @NotBlank (message = "First name is required")
         String firstName,
 
+        @NotNull
         @NotBlank (message = "Last name is required")
         String lastName,
 

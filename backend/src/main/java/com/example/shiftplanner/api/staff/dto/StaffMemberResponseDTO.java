@@ -1,7 +1,6 @@
 package com.example.shiftplanner.api.staff.dto;
 
 import com.example.shiftplanner.domain.staff.QualificationLevel;
-import jakarta.validation.constraints.NotBlank;
 
 /**
  * Data Transfer Object used to return a {@link com.example.shiftplanner.domain.staff.StaffMember}
