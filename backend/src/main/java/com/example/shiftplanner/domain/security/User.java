@@ -32,6 +32,7 @@ public class User implements UserDetails {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
+    @Getter
     private Set<UserRole> roles;
 
     @Getter
@@ -70,10 +71,6 @@ public class User implements UserDetails {
 
     public void deactivate() {
         this.active = false;
-    }
-
-    public Collection<UserRole> getRoles() {
-        return  roles;
     }
 
 

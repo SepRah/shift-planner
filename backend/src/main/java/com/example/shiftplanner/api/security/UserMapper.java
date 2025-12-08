@@ -3,7 +3,6 @@ package com.example.shiftplanner.api.security;
 import com.example.shiftplanner.api.security.dto.UserRegistrationRequestDTO;
 import com.example.shiftplanner.api.security.dto.UserResponseDTO;
 import com.example.shiftplanner.api.staff.dto.StaffMemberCreateDTO;
-import com.example.shiftplanner.api.staff.dto.StaffMemberDTO;
 import com.example.shiftplanner.domain.security.User;
 import com.example.shiftplanner.domain.security.UserRole;
 import com.example.shiftplanner.domain.staff.StaffMember;
@@ -18,10 +17,9 @@ public class UserMapper {
                 user.getUsername(),
                 user.getRoles(),
                 new StaffMemberCreateDTO(
-                        user.getStaffmember().getId(),
                         user.getStaffmember().getName().getFirstName(),
                         user.getStaffmember().getName().getLastName(),
-                        user.getStaffmember().getRole().getName(),
+                        user.getStaffmember().getStaffQualificationLevel(),
                         user.getStaffmember().getFte()
                 )
         );
