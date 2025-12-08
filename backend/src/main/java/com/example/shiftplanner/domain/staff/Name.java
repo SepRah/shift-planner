@@ -1,5 +1,6 @@
 package com.example.shiftplanner.domain.staff;
 
+import com.example.shiftplanner.exception.DomainValidationNotNullException;
 import jakarta.persistence.Embeddable;
 import lombok.Getter;
 
@@ -38,11 +39,11 @@ public class Name {
      * @throws IllegalArgumentException if either firstName or lastName is blank
      */
     public Name(String firstName, String lastName) {
-        if (firstName.isBlank() || firstName.isEmpty() ) {
-            throw new IllegalArgumentException("First name is required");
+        if (firstName.isBlank()) {
+            throw new DomainValidationNotNullException("First name");
         }
-        if (lastName.isEmpty() || lastName.isBlank()) {
-            throw new IllegalArgumentException("Last name is required");
+        if (lastName.isBlank()) {
+            throw new DomainValidationNotNullException("Last name");
         }
         this.firstName = firstName;
         this.lastName = lastName;

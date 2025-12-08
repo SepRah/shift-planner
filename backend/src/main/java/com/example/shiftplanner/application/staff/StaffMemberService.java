@@ -44,41 +44,66 @@ public class  StaffMemberService {
     }
 
     /**
-     * Updates an existing {@link StaffMember} by applying the changes provided in
-     * the {@link StaffMemberUpdateDTO}. This method performs a <strong>partial update</strong>,
-     * meaning that only fields explicitly set in the DTO are modified. Fields set to
-     * {@code null} remain unchanged.
-     * <p>
-     * Update process:
+     * Updates an existing {@link StaffMember} by applying the changes provided in the
+     * {@link StaffMemberUpdateDTO}. This method performs a <strong>partial update</strong>:
+     * only fields explicitly set (non-null) in the DTO are modified, while all other fields
+     * remain unchanged.
+     *
+     * <p><strong>Update workflow:</strong></p>
      * <ol>
-     *   <li>Load the existing staff member by ID. If no entity is found,
+     *   <li><strong>Entity lookup:</strong>
+     *       The staff member is loaded by ID. If no matching entity is found,
      *       a {@link StaffMemberNotFoundException} is thrown.</li>
-     *   <li>Apply non-null fields from the update DTO using
-     *       {@link StaffMemberMapper#applyUpdate(StaffMember, StaffMemberUpdateDTO)}.
-     *       This ensures that domain rules are respected, e.g.:</li>
-     *       <ul>
-     *         <li>the {@link Name} value object is replaced rather than mutated,</li>
-     *         <li>the qualification level is updated only when provided,</li>
-     *         <li>FTE updates are validated in the domain model.</li>
-     *       </ul>
-     *   <li>Persist the updated staff member using the repository.</li>
-     *   <li>Convert the updated entity into a response DTO via
-     *       {@link StaffMemberMapper#toDto(StaffMember)}.</li>
+     *
+     *   <li><strong>Name update (optional):</strong>
+     *       If either {@code firstName} or {@code lastName} is provided,
+     *       a new {@link Name} value object is constructed.
+     *       Missing values are taken from the existing entity.
+     *       <br>
+     *       <em>Note:</em> Value objects are replaced instead of mutated, following DDD principles.</li>
+     *
+     *   <li><strong>QualificationLevel update (optional):</strong>
+     *       Applied only when provided. The setter invokes domain-level validation where applicable.</li>
+     *
+     *   <li><strong>FTE update (optional):</strong>
+     *       Applied only when provided. The domain model enforces invariants
+     *       (FTE must be between 0.0 and 1.0).</li>
+     *
+     *   <li><strong>Persistence:</strong>
+     *       The updated entity is saved via the repository.</li>
+     *
+     *   <li><strong>DTO conversion:</strong>
+     *       The saved entity is converted into a {@link StaffMemberResponseDTO}
+     *       for API output.</li>
      * </ol>
      *
-     * @param id                    ID of the staff member to update
-     * @param staffMemberUpdateDTO  DTO containing the fields to update; only non-null
-     *                              values are applied
-     * @return {@link StaffMemberResponseDTO} representation of the updated staff member
+     * @param id   the ID of the staff member to update
+     * @param dto  DTO containing update values; only non-null fields are applied
+     * @return a {@link StaffMemberResponseDTO} representing the updated staff member
      *
      * @throws StaffMemberNotFoundException if no staff member with the given ID exists
-     * @throws IllegalArgumentException     if domain-level invariants are violated (e.g. invalid FTE or name)
+     * @throws IllegalArgumentException     if domain invariants are violated
+     *                                      (e.g. invalid name or FTE outside 0.0–1.0)
      */
-    public StaffMemberResponseDTO updateStaffMember(Long id, StaffMemberUpdateDTO staffMemberUpdateDTO) {
+    public StaffMemberResponseDTO updateStaffMember(Long id, StaffMemberUpdateDTO dto) {
         StaffMember staffMember = staffMemberRepository.findStaffMemberById(id)
                 .orElseThrow(StaffMemberNotFoundException::new);
-        // apply fields from DTO
-        StaffMemberMapper.applyUpdate(staffMember, staffMemberUpdateDTO);
+
+        // Name
+        if (dto.firstName() != null || dto.lastName() != null) {
+            String newFirst = dto.firstName() != null ? dto.firstName() : staffMember.getName().getFirstName();
+            String newLast  = dto.lastName()  != null ? dto.lastName()  : staffMember.getName().getLastName();
+            staffMember.setName(new Name(newFirst, newLast));
+        }
+        // QualificationLevel
+        if (dto.staffQualificationLevel() != null) {
+            staffMember.setStaffQualificationLevel(dto.staffQualificationLevel());
+        }
+        // FTE
+        if (dto.fte() != null) {
+            staffMember.setFte(dto.fte()); // Domain validiert
+        }
+
         // save
         StaffMember saved = staffMemberRepository.save(staffMember);
         return StaffMemberMapper.toDto(saved);

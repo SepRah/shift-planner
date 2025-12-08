@@ -48,56 +48,5 @@ public class StaffMemberMapper {
                 staffMember.getFte()
         );
     }
-
-    /**
-     * Applies the changes from a {@link StaffMemberUpdateDTO} to an existing
-     * {@link StaffMember} domain entity.
-     * <p>
-     * This method performs a <strong>partial update</strong>: only non-null fields
-     * in the update DTO are applied to the target entity. Fields that are {@code null}
-     * in the DTO remain unchanged.
-     * <p>
-     * Update behaviour:
-     * <ul>
-     *   <li><strong>Name</strong> – If either {@code firstName} or {@code lastName} is provided,
-     *       a new {@link Name} value object is created. Missing fields are taken from the
-     *       existing name. Value objects are replaced rather than mutated to follow DDD principles.</li>
-     *   <li><strong>QualificationLevel</strong> – Updated only if the DTO specifies a non-null value.</li>
-     *   <li><strong>FTE</strong> – Updated only if non-null. The domain setter validates the
-     *       allowed range (0.0 to 1.0).</li>
-     * </ul>
-     *
-     * @param staffMember the existing domain entity that should be updated
-     * @param updateDTO   the DTO containing the fields to update; any field set to {@code null}
-     *                    will be ignored and therefore remain unchanged
-     *
-     * @throws IllegalArgumentException if the new name or FTE violates domain invariants
-     */
-    public static void applyUpdate(StaffMember staffMember, StaffMemberUpdateDTO updateDTO) {
-
-        // updating Name (if one of the two values are not empty)
-        if (updateDTO.firstName() != null || updateDTO.lastName() != null) {
-            String newFirst = updateDTO.firstName() != null
-                    ? updateDTO.firstName()
-                    : staffMember.getName().getFirstName();
-
-            String newLast = updateDTO.lastName() != null
-                    ? updateDTO.lastName()
-                    : staffMember.getName().getLastName();
-
-            // Name-Value-Object macht eigene Validierung
-            staffMember.setName(new Name(newFirst, newLast));
-        }
-
-        // Updating QualificationLevel
-        if (updateDTO.staffQualificationLevel() != null) {
-            staffMember.setStaffQualificationLevel(updateDTO.staffQualificationLevel());
-        }
-
-        // Updating FTE  (Domain-Setter validates 0.0–1.0 range)
-        if (updateDTO.fte() != null) {
-            staffMember.setFte(updateDTO.fte());
-        }
-    }
 }
 
