@@ -61,7 +61,7 @@ public class StaffMember {
      * @throws IllegalArgumentException if any argument is invalid
      */
     public StaffMember (Name name, QualificationLevel staffQualificationLevel, double fte) {
-        if (name == null) throw new DomainValidationNotNullException("Name");;
+        if (name == null) throw new DomainValidationNotNullException("Name");
         if (staffQualificationLevel == null) throw new DomainValidationNotNullException("Qualification level");
         if (fte < 0.0 || fte > 1.0 ) throw new DomainValidationFteException();
 
