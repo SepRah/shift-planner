@@ -3,7 +3,7 @@ package com.example.shiftplanner.api.task;
 import com.example.shiftplanner.api.task.dto.TaskAssignmentCreateDto;
 import com.example.shiftplanner.api.task.dto.TaskAssignmentUpdateDto;
 import com.example.shiftplanner.api.task.dto.TaskAssignmentResponseDto;
-import com.example.shiftplanner.domain.task.service.TaskAssignmentService;
+import com.example.shiftplanner.application.task.TaskAssignmentService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

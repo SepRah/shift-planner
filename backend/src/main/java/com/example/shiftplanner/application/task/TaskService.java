@@ -3,6 +3,7 @@ package com.example.shiftplanner.application.task;
 import com.example.shiftplanner.api.task.TaskMapper;
 import com.example.shiftplanner.api.task.dto.TaskCreateDto;
 import com.example.shiftplanner.api.task.dto.TaskResponseDto;
+import com.example.shiftplanner.api.task.dto.TaskUpdateDto;
 import com.example.shiftplanner.domain.task.Task;
 import com.example.shiftplanner.infrastructure.TaskRepository;
 import org.springframework.stereotype.Service;

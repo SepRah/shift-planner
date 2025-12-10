@@ -9,7 +9,9 @@ import com.example.shiftplanner.domain.staff.StaffMember;
 import com.example.shiftplanner.domain.task.Task;
 import com.example.shiftplanner.domain.task.TaskAssignment;
 import com.example.shiftplanner.exception.AssignmentNotFoundException;
+import com.example.shiftplanner.exception.StaffMemberNotFoundException;
 import com.example.shiftplanner.exception.TaskNotFoundException;
+import com.example.shiftplanner.infrastructure.StaffMemberRepository;
 import com.example.shiftplanner.infrastructure.TaskAssignmentRepository;
 import com.example.shiftplanner.infrastructure.TaskRepository;
 import org.springframework.stereotype.Service;
@@ -22,14 +24,17 @@ public class TaskAssignmentService {
 
     private final TaskAssignmentRepository assignmentRepository;
     private final TaskRepository taskRepository;
-    private final StaffMemberService staffService;
+    private final StaffMemberRepository staffMemberRepository;
+
+    // findStaffMemberById aus StaffMemberRepository
+
 
     public TaskAssignmentService(TaskAssignmentRepository assignmentRepository,
                                  TaskRepository taskRepository,
-                                 StaffMemberService staffService) {
+                                 StaffMemberRepository staffMemberRepository) {
         this.assignmentRepository = assignmentRepository;
         this.taskRepository = taskRepository;
-        this.staffService = staffService;
+        this.staffMemberRepository = staffMemberRepository;
     }
 
     // Create Assignment
@@ -37,7 +42,9 @@ public class TaskAssignmentService {
         Task task = taskRepository.findById(dto.getTaskId())
                 .orElseThrow(TaskNotFoundException::new);
 
-        StaffMember staff = staffService.findById(dto.getStaffId());
+        StaffMember staff = staffMemberRepository.findById(dto.getStaffId())
+                .orElseThrow(StaffMemberNotFoundException::new);
+
 
         TaskAssignment assignment = new TaskAssignment();
         assignment.setTask(task);
