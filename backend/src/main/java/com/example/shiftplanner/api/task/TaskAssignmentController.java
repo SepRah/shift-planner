@@ -5,7 +5,7 @@ import com.example.shiftplanner.api.task.dto.TaskAssignmentUpdateDto;
 import com.example.shiftplanner.api.task.dto.TaskAssignmentResponseDto;
 import com.example.shiftplanner.application.task.TaskAssignmentService;
 import org.springframework.web.bind.annotation.*;
-
+import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -19,13 +19,13 @@ public class TaskAssignmentController {
     }
 
     @PostMapping
-    public TaskAssignmentResponseDto create(@RequestBody TaskAssignmentCreateDto dto) {
+    public TaskAssignmentResponseDto create(@RequestBody @Valid TaskAssignmentCreateDto dto) {
         return service.create(dto);
     }
 
     @PutMapping("/{id}")
     public TaskAssignmentResponseDto update(@PathVariable Long id,
-                                            @RequestBody TaskAssignmentUpdateDto dto) {
+                                            @RequestBody @Valid TaskAssignmentUpdateDto dto) {
         return service.update(id, dto);
     }
 
@@ -42,6 +42,12 @@ public class TaskAssignmentController {
     @GetMapping("/staff/{staffId}")
     public List<TaskAssignmentResponseDto> getByStaff(@PathVariable Long staffId) {
         return service.getByStaff(staffId);
+    }
+
+    // Optional: Alle Assignments abrufen
+    @GetMapping
+    public List<TaskAssignmentResponseDto> getAll() {
+        return service.getAll();
     }
 
     @DeleteMapping("/{id}")

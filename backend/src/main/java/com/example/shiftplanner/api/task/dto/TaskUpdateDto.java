@@ -7,6 +7,8 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 
 /**
  * Data Transfer Object für das Updaten einer Aufgabe.
@@ -14,7 +16,7 @@ import lombok.*;
 
 public class TaskUpdateDto {
     @NotBlank
-    private String taskName;
-    private String taskDescription;
-    private QualificationLevel taskQualificationLevel;
+    private String name;
+    private String description;
+    private QualificationLevel qualificationLevel;
 }

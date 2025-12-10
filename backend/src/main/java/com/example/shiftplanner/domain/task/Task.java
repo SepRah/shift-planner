@@ -2,12 +2,15 @@ package com.example.shiftplanner.domain.task;
 
 import com.example.shiftplanner.domain.staff.QualificationLevel;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import java.time.Instant;
 
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 
 /**
  * Entity-Klasse für eine Aufgabe im Schichtplaner, die einem Mitarbeiter (staff) zugewiesen werden kann,
@@ -22,26 +25,22 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
     @Column(length = 100, nullable = false)
     private String name;
 
-    @Column(length = 2000, nullable = true)
+    @Column(length = 2000)
     private String description;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private QualificationLevel qualificationLevel;
 
-    @Embedded
-    private TimeRange timeRange;
-
     @Column(updatable = false)
     private Instant createdAt;
 
     @Column
     private Instant updatedAt;
-
-    public Task() {}
 
     public Task(String name, String description, QualificationLevel qualificationLevel) {
         this.name = name;

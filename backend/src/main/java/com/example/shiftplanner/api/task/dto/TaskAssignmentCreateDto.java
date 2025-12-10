@@ -6,7 +6,9 @@ import lombok.*;
 
 @Getter
 @Setter
-
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class TaskAssignmentCreateDto {
 
     @NotNull
@@ -15,6 +17,6 @@ public class TaskAssignmentCreateDto {
     @NotNull
     private Long staffId;
 
-    private TimeRange timeRange;
+    private TimeRange timeRange; // optional at creation, can be set/updated later
 
 }

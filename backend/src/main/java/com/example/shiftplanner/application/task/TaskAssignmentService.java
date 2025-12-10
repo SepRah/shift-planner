@@ -4,7 +4,6 @@ import com.example.shiftplanner.api.task.dto.TaskAssignmentCreateDto;
 import com.example.shiftplanner.api.task.dto.TaskAssignmentResponseDto;
 import com.example.shiftplanner.api.task.dto.TaskAssignmentUpdateDto;
 import com.example.shiftplanner.api.task.TaskAssignmentMapper;
-import com.example.shiftplanner.application.staff.StaffMemberService;
 import com.example.shiftplanner.domain.staff.StaffMember;
 import com.example.shiftplanner.domain.task.Task;
 import com.example.shiftplanner.domain.task.TaskAssignment;
@@ -65,6 +64,11 @@ public class TaskAssignmentService {
             assignment.setTimeRange(dto.getTimeRange());
         if (dto.getCompleted() != null)
             assignment.setCompleted(dto.getCompleted());
+        if (dto.getStaffId() != null) {
+            StaffMember staff = staffMemberRepository.findById(dto.getStaffId())
+                    .orElseThrow(StaffMemberNotFoundException::new);
+            assignment.setAssignedStaff(staff);
+        }
 
         TaskAssignment saved = assignmentRepository.save(assignment);
         return TaskAssignmentMapper.toDto(saved);
@@ -92,8 +96,18 @@ public class TaskAssignmentService {
                 .collect(Collectors.toList());
     }
 
+    // Get all assignments
+    public List<TaskAssignmentResponseDto> getAll() {
+        return assignmentRepository.findAll().stream()
+                .map(TaskAssignmentMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
     // Delete Assignment
     public void delete(Long id) {
+        if (!assignmentRepository.existsById(id)) {
+            throw new AssignmentNotFoundException();
+        }
         assignmentRepository.deleteById(id);
     }
 }

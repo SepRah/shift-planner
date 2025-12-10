@@ -2,12 +2,12 @@ package com.example.shiftplanner.api.task;
 
 import com.example.shiftplanner.domain.task.Task;
 import com.example.shiftplanner.api.task.dto.TaskCreateDto;
-import com.example.shiftplanner.api.task.dto.TaskUpdateDto;
 import com.example.shiftplanner.api.task.dto.TaskResponseDto;
+import com.example.shiftplanner.api.task.dto.TaskUpdateDto;
 
 /**
  * Mapper-Klasse für Task-Entity und DTOs.
- * Wandelt TaskCreateDto/TaskUpdateDto in Task-Entity um und
+ * Wandelt TaskCreateDto in Task-Entity um und
  * Task-Entity in TaskResponseDto.
  */
 
@@ -23,25 +23,11 @@ public class TaskMapper {
         if (dtoCreate == null) return null;
 
         Task task = new Task();
-        task.setName(dtoCreate.getTaskName());
-        task.setDescription(dtoCreate.getTaskDescription());
-        task.setQualificationLevel(dtoCreate.getTaskQualificationLevel());
+        task.setName(dtoCreate.getName());
+        task.setDescription(dtoCreate.getDescription());
+        task.setQualificationLevel(dtoCreate.getQualificationLevel());
 
         return task;
-    }
-
-    /**
-     * Update mit TaskUpdateDto eines Tasks.
-     * @param dtoUpdate DTO mit neuen Daten
-     */
-
-    public static void updateEntity(Task task, TaskUpdateDto dtoUpdate) {
-        if (dtoUpdate == null || task == null) return;
-
-        if (dtoUpdate.getTaskName() != null) task.setName(dtoUpdate.getTaskName());
-        if (dtoUpdate.getTaskDescription() != null) task.setDescription(dtoUpdate.getTaskDescription());
-        if (dtoUpdate.getTaskQualificationLevel() != null) task.setQualificationLevel(dtoUpdate.getTaskQualificationLevel());
-
     }
 
     /**
@@ -54,10 +40,21 @@ public class TaskMapper {
         if (task == null) return null;
 
         TaskResponseDto dtoResponse = new TaskResponseDto();
-        dtoResponse.setTaskName(task.getName());
-        dtoResponse.setTaskDescription(task.getDescription());
-        dtoResponse.setTaskQualificationLevel(task.getQualificationLevel());
+        dtoResponse.setName(task.getName());
+        dtoResponse.setDescription(task.getDescription());
+        dtoResponse.setQualificationLevel(task.getQualificationLevel());
 
         return dtoResponse;
+    }
+
+    /**
+     * Aktualisiert eine Task-Entity mit Werten aus einem TaskUpdateDto.
+     * Nur Felder, die im DTO gesetzt sind, werden übernommen.
+     */
+    public static void updateEntity(Task task, TaskUpdateDto dtoUpdate) {
+        if (task == null || dtoUpdate == null) return;
+        if (dtoUpdate.getName() != null) task.setName(dtoUpdate.getName());
+        if (dtoUpdate.getDescription() != null) task.setDescription(dtoUpdate.getDescription());
+        if (dtoUpdate.getQualificationLevel() != null) task.setQualificationLevel(dtoUpdate.getQualificationLevel());
     }
 }

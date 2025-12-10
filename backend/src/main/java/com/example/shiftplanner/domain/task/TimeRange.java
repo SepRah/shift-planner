@@ -24,4 +24,7 @@ public class TimeRange {
         this.end = end;
     }
 
+    public boolean isValid() {
+        return start != null && end != null && start.isBefore(end);
+    }
 }

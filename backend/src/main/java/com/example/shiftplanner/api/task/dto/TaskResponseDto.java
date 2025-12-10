@@ -3,15 +3,18 @@ package com.example.shiftplanner.api.task.dto;
 import com.example.shiftplanner.domain.staff.QualificationLevel;
 import lombok.*;
 
-@Getter
-@Setter
 
 /**
  * Data Transfer Object für die Ausgabe einer Aufgabe.
  * */
 
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class TaskResponseDto {
-    private String taskName;
-    private String taskDescription;
-    private QualificationLevel taskQualificationLevel;
+    private String name;
+    private String description;
+    private QualificationLevel qualificationLevel;
 }

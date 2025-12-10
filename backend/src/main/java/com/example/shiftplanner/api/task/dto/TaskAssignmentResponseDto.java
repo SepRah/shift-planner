@@ -7,7 +7,9 @@ import java.time.Instant;
 
 @Getter
 @Setter
-
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class TaskAssignmentResponseDto {
 
     private Long id;
@@ -20,6 +22,8 @@ public class TaskAssignmentResponseDto {
     private Instant taskUpdatedAt;
 
     private Long staffId;
+    private String staffName; 
+
     private TimeRange timeRange;
     private Boolean completed;
 

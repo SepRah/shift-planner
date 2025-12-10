@@ -1,9 +1,11 @@
 package com.example.shiftplanner.api.task;
 
 import com.example.shiftplanner.api.task.dto.TaskCreateDto;
+import com.example.shiftplanner.api.task.dto.TaskUpdateDto;
 import com.example.shiftplanner.api.task.dto.TaskResponseDto;
 import com.example.shiftplanner.application.task.TaskService;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -18,7 +20,7 @@ public class TaskController {
     }
 
     @PostMapping
-    public TaskResponseDto create(@RequestBody TaskCreateDto dto) {
+    public TaskResponseDto create(@RequestBody @Valid TaskCreateDto dto) {
         return taskService.create(dto);
     }
 
@@ -33,7 +35,7 @@ public class TaskController {
     }
 
     @PutMapping("/{id}")
-    public TaskResponseDto update(@PathVariable Long id, @RequestBody TaskCreateDto dto) {
+    public TaskResponseDto update(@PathVariable Long id, @RequestBody @Valid TaskUpdateDto dto) {
         return taskService.update(id, dto);
     }
 
