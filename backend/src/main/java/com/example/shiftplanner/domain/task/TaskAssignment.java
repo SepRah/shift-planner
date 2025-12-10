@@ -7,13 +7,11 @@ import java.time.Instant;
 
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "task_assignments")
 public class TaskAssignment {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -36,23 +34,6 @@ public class TaskAssignment {
 
     private Instant updatedAt;
 
-    public TaskAssignment(Task task, StaffMember assignedStaff) {
-        this.task = task;
-        this.assignedStaff = assignedStaff;
-        this.completed = false;
-        this.createdAt = Instant.now();
-        this.updatedAt = Instant.now();
-    }
-
-    public TaskAssignment(Task task, StaffMember assignedStaff, TimeRange timeRange) {
-        this.task = task;
-        this.assignedStaff = assignedStaff;
-        this.timeRange = timeRange;
-        this.completed = false;
-        this.createdAt = Instant.now();
-        this.updatedAt = Instant.now();
-    }
-
     @PrePersist
     protected void onCreate() {
         createdAt = Instant.now();
@@ -62,11 +43,6 @@ public class TaskAssignment {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = Instant.now();
-    }
-
-    public void updateTimeRange(TimeRange newTimeRange) {
-        this.timeRange = newTimeRange;
-        this.updatedAt = Instant.now();
     }
 }
 
