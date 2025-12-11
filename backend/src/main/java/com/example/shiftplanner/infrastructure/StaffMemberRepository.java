@@ -61,21 +61,21 @@ public interface StaffMemberRepository extends JpaRepository<StaffMember, Long> 
      * @param qualificationLevel qualification level to filter by
      * @return list of matching staff members (possibly empty)
      */
-    List<StaffMember> getAllStaffMembersByStaffQualificationLevel(QualificationLevel qualificationLevel);
-    /**
-     * Returns all staff members.
-     * <p>
-     * Note: JpaRepository already provides {@link #findAll()},
-     * this method is functionally equivalent.
-     *
-     * @return list of all staff members
-     */
-    List<StaffMember> getAllStaffMembers ();
-    /**
-     * Returns all staff members with the given FTE value.
-     *
-     * @param fte full-time equivalent to filter by
-     * @return list of matching staff members (possibly empty)
-     */
-    List<StaffMember> getAllStaffMembersByFte(double fte);
+//    List<StaffMember> getAllStaffMembersByStaffQualificationLevel(QualificationLevel qualificationLevel);
+//    /**
+//     * Returns all staff members.
+//     * <p>
+//     * Note: JpaRepository already provides {@link #findAll()},
+//     * this method is functionally equivalent.
+//     *
+//     * @return list of all staff members
+//     */
+//    List<StaffMember> getAllStaffMembers ();
+//    /**
+//     * Returns all staff members with the given FTE value.
+//     *
+//     * @param fte full-time equivalent to filter by
+//     * @return list of matching staff members (possibly empty)
+//     */
+//    List<StaffMember> getAllStaffMembersByFte(double fte);
 }

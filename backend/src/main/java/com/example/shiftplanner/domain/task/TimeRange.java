@@ -1,5 +1,6 @@
 package com.example.shiftplanner.domain.task;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import java.time.Instant;
 import lombok.*;
@@ -14,7 +15,10 @@ import lombok.*;
 @ToString
 @Embeddable
 public class TimeRange {
+    @Column(name = "start_time")
     private Instant start;
+
+    @Column(name = "end_time")
     private Instant end;
 
     public TimeRange() {}

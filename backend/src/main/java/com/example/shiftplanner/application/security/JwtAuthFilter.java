@@ -32,7 +32,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException, java.io.IOException {
 
-        String path = request.getRequestURI();
+        String path = request.getServletPath();
         // Endpoints that should skip JWT
         if (path.startsWith("/h2-console") ||
                 path.startsWith("/auth/login") ||
@@ -71,7 +71,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                         new UsernamePasswordAuthenticationToken(
                                 user,
                                 null,
-                                user.getAuthorities() // from your UserDetails implementation
+                                user.getAuthorities()
                         );
 
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

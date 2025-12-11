@@ -44,27 +44,23 @@ public class UserService {
     /**
      * Registers a new user with a given role.
      */
-    public User registerUser(String username,
-                             String rawPassword,
-                             String firstName,
-                             String lastName,
-                             double fte
+    public User registerUser(UserRegistrationRequestDTO dto
     ) {
 
-        if (userRepository.existsByUsername(username)) {
+        if (userRepository.existsByUsername(dto.username())) {
             throw new IllegalArgumentException("Username already taken");
         }
 
-        if (staffmemberRepository.existsByNameFirstNameAndNameLastName(firstName, lastName)) {
+        if (staffmemberRepository.existsByNameFirstNameAndNameLastName(dto.firstName(), dto.lastName())) {
             throw new IllegalArgumentException("Staffmember already exists");
         }
 
-        String encodedPassword = passwordEncoder.encode(rawPassword);
+        String encodedPassword = passwordEncoder.encode(dto.password());
 
         // Create Staffmember linked to user
-        StaffMember staffmember = new StaffMember(new Name(firstName, lastName), QualificationLevel.NONE, fte);
+        StaffMember staffmember = new StaffMember(new Name(dto.firstName(), dto.lastName()), QualificationLevel.NONE, dto.fte());
 
-        User user = new User(username, encodedPassword, Set.of(UserRole.USER));
+        User user = new User(dto.username(), encodedPassword, Set.of(UserRole.USER));
         user.setStaffmember(staffmember);
 
         return userRepository.save(user);
@@ -74,17 +70,14 @@ public class UserService {
     // Private admin creation method
     // ----------------------------
     protected void registerAdminUser(String username,
-                                     String rawPassword,
-                                     String firstName,
-                                     String lastName,
-                                     double fte) {
+                                     String rawPassword) {
 
         if (userRepository.existsByUsername(username)) {
             throw new IllegalArgumentException("Admin username already exists");
         }
 
         String encoded = passwordEncoder.encode(rawPassword);
-        StaffMember staff = new StaffMember(new Name(firstName, lastName), QualificationLevel.MANAGER, fte);
+        StaffMember staff = new StaffMember(new Name("System", "Administrator"), QualificationLevel.MANAGER, 1);
 
         User admin = new User(username, encoded, Set.of(UserRole.ADMIN));
         admin.setStaffmember(staff);

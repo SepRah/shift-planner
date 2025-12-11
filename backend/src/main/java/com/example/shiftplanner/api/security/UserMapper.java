@@ -26,7 +26,7 @@ public class UserMapper {
     }
 
     public static User toEntity(UserRegistrationRequestDTO dto, String encodedPassword) {
-        StaffMember staff = StaffMember.create(dto.firstName(), dto.lastName(), dto.qualification());
+        StaffMember staff = StaffMember.create(dto.firstName(), dto.lastName(), dto.qualification(), dto.fte());
         return User.create(dto.username(), encodedPassword, Set.of(UserRole.USER), staff);
     }
 }

@@ -7,5 +7,6 @@ public record UserRegistrationRequestDTO(
         String password,
         String firstName,
         String lastName,
-        QualificationLevel qualification
+        QualificationLevel qualification,
+        double fte
 ) {}

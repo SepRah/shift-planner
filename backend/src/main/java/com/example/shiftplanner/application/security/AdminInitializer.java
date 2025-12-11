@@ -22,7 +22,7 @@ public class AdminInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
         if (!userService.usernameExists(adminUsername)) {
-            userService.registerAdminUser(adminUsername, adminPassword, "System", "Administrator", 1);
+            userService.registerAdminUser(adminUsername, adminPassword);
             System.out.println("Default admin user created!");
         } else {
             System.out.println("Admin user already exists, skipping creation.");

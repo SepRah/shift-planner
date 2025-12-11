@@ -7,10 +7,7 @@ import com.example.shiftplanner.domain.security.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -25,13 +22,30 @@ public class AuthController {
         this.authenticationService = authenticationService;
     }
 
+    @GetMapping("/test")
+    public String test() {
+        return "Profile is active!";
+    }
+
+    // ---------------------------
+    // Register a new default user
+    // ---------------------------
+    @PostMapping("/registerDefault")
+    public ResponseEntity<UserResponseDTO> registerDefault(@RequestBody UserRegistrationRequestDTO dto) {
+
+        User newUser = userService.registerDefaultUser(dto);
+        UserResponseDTO response = UserMapper.toDTO(newUser);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
     // ---------------------------
     // Register a new user
     // ---------------------------
     @PostMapping("/register")
     public ResponseEntity<UserResponseDTO> register(@RequestBody UserRegistrationRequestDTO dto) {
 
-        User newUser = userService.registerDefaultUser(dto);
+        User newUser = userService.registerUser(dto);
         UserResponseDTO response = UserMapper.toDTO(newUser);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
