@@ -1,4 +1,6 @@
-export async function register({ username, password, confirmPassword }) {
+import api from "../api/axios";
+
+export async function register({ username, password, confirmPassword, firstName, lastName, fte }) {
     if (password !== confirmPassword) {
         throw new Error("Passwords do not match");
     }
@@ -7,9 +9,24 @@ export async function register({ username, password, confirmPassword }) {
         throw new Error("Password too short");
     }
 
-    return fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
+    const response = await api.post("/auth/register", {
+        username,
+        password,
+        firstName,
+        lastName,
+        qualification: "NONE",
+        fte
     });
+
+    return response.data;
+}
+
+export async function login({ username, password}) {
+
+    const response = await api.post("/auth/login", {
+        username,
+        password,
+    });
+
+    return response.data;
 }

@@ -1,17 +1,23 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import PasswordInput from "../components/PasswordInput.jsx";
+import {login} from "../services/authService.js";
 
 export default function LoginPage() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         console.log("Login:", username, password);
-        // API logic comes later
+
+        try {
+            const data = await login({username, password});
+            console.log("Logged in:", data);
+        } catch (err) {
+            console.error("Login failed:", err);
+        }
     };
 
     return (
