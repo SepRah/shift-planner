@@ -55,27 +55,22 @@ public interface StaffMemberRepository extends JpaRepository<StaffMember, Long> 
      */
     boolean existsByNameFirstNameAndNameLastName(String firstName, String lastName);
 
+
     /**
-     * Returns all staff members with the given qualification level.
+     * Returns all staff members with the given qualification value.
+     * <p>
      *
-     * @param qualificationLevel qualification level to filter by
-     * @return list of matching staff members (possibly empty)
+     * @return list of all staff members
      */
-//    List<StaffMember> getAllStaffMembersByStaffQualificationLevel(QualificationLevel qualificationLevel);
-//    /**
-//     * Returns all staff members.
-//     * <p>
-//     * Note: JpaRepository already provides {@link #findAll()},
-//     * this method is functionally equivalent.
-//     *
-//     * @return list of all staff members
-//     */
-//    List<StaffMember> getAllStaffMembers ();
-//    /**
-//     * Returns all staff members with the given FTE value.
-//     *
-//     * @param fte full-time equivalent to filter by
-//     * @return list of matching staff members (possibly empty)
-//     */
-//    List<StaffMember> getAllStaffMembersByFte(double fte);
+    List<StaffMember> findAllByStaffQualificationLevel(QualificationLevel staffQualificationLevel);
+
+    /**
+     * Returns all staff members with the given fte value.
+     * <p>
+     *
+     * @return list of all staff members
+     */
+    List<StaffMember> findAllByFte(double fte);
+
+
 }
