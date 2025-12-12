@@ -61,19 +61,4 @@ public class AuthController {
 
         return ResponseEntity.ok(token);
     }
-
-    // ---------------------------
-    // Change password (authenticated user)
-    // ---------------------------
-    @PostMapping("/change-password")
-    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequestDTO dto) {
-
-        // Get the currently authenticated username
-        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        // Call service method
-        userService.changePassword(currentUsername, dto);
-
-        return ResponseEntity.ok("Password changed successfully");
-    }
 }

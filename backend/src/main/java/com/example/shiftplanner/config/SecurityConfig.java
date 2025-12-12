@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -70,6 +71,7 @@ public class SecurityConfig {
     // --- Security filter chains ---
     @Bean
     @Order(1)
+    @Profile("dev")
     public SecurityFilterChain h2Chain(HttpSecurity http) throws Exception {
         http
                 .securityMatcher("/h2-console/**")
@@ -88,7 +90,6 @@ public class SecurityConfig {
                 .securityMatcher("/auth/**")
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/change-password").authenticated()
                         .anyRequest().permitAll());
 
         return http.build();
@@ -110,6 +111,7 @@ public class SecurityConfig {
                 .authenticationProvider(authProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/auth/change-password").authenticated()
                         .requestMatchers("/api/system/**").hasRole("SYSTEM_ADMIN")
                         .requestMatchers("/api/admin/**").hasAnyRole("ADMIN", "SYSTEM_ADMIN")
                         .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN", "SYSTEM_ADMIN")
