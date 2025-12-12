@@ -9,9 +9,12 @@ import com.example.shiftplanner.domain.staff.Name;
 import com.example.shiftplanner.domain.staff.QualificationLevel;
 import com.example.shiftplanner.domain.staff.StaffMember;
 
+import com.example.shiftplanner.exception.AccessDeniedException;
 import com.example.shiftplanner.exception.InvalidPasswordException;
 import com.example.shiftplanner.infrastructure.StaffMemberRepository;
 import com.example.shiftplanner.infrastructure.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +26,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final StaffMemberRepository staffmemberRepository;
     private final PasswordEncoder passwordEncoder;
+    private SecurityUtils securityUtils;
 
     public UserService(UserRepository userRepository,
                        StaffMemberRepository staffmemberRepository,
@@ -86,20 +90,43 @@ public class UserService {
     }
 
     /**
-     * Admin-only: assign additional USER roles.
+     * Admin-only: assign/update additional USER roles.
      */
-    public User assignUserRoles(Long targetUserId, Set<UserRole> newRoles, User actingUser) {
+    @Transactional
+    public void updateUserRoles(Long targetUserId, Set<UserRole> newRoles) {
 
-        // Ensure the acting user is admin
-        if (!actingUser.getRoles().contains(UserRole.ADMIN)) {
-            throw new SecurityException("Only admin users can assign user roles.");
+        User actingUser = securityUtils.getCurrentUser();
+
+        // 1. Must be ADMIN or SYSTEM_ADMIN
+        boolean isAdmin =
+                actingUser.getRoles().contains(UserRole.ADMIN) ||
+                        actingUser.getRoles().contains(UserRole.SYSTEM_ADMIN);
+
+        if (!isAdmin) {
+            throw new AccessDeniedException("Not allowed to update roles");
+        }
+
+        // 2. Only SYSTEM_ADMIN may assign SYSTEM_ADMIN
+        if (newRoles.contains(UserRole.SYSTEM_ADMIN) &&
+                !actingUser.getRoles().contains(UserRole.SYSTEM_ADMIN)) {
+            throw new AccessDeniedException(
+                    "Only SYSTEM_ADMIN can assign SYSTEM_ADMIN role"
+            );
         }
 
         User targetUser = userRepository.findById(targetUserId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
+        // 3. Prevent self-demotion (optional but recommended)
+        if (actingUser.getId().equals(targetUserId) &&
+                !newRoles.contains(UserRole.ADMIN) &&
+                !newRoles.contains(UserRole.SYSTEM_ADMIN)) {
+            throw new AccessDeniedException("You cannot remove your own admin role");
+        }
+
+        // 4. Replace roles atomically
+        targetUser.getRoles().clear();
         targetUser.getRoles().addAll(newRoles);
-        return userRepository.save(targetUser);
     }
 
     /**
@@ -133,5 +160,12 @@ public class UserService {
 
         user.setPasswordHash(passwordEncoder.encode(dto.newPassword()));
         userRepository.save(user);
+    }
+
+    public void setUserActive(Long userId, boolean b) {
+        User targetUser = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        // Change the active property
+        targetUser.setActive(b);
     }
 }

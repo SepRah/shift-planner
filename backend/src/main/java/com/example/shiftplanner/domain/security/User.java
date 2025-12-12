@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.List;
+
 import java.util.Set;
 
 @Entity
@@ -36,6 +36,7 @@ public class User implements UserDetails {
     private Set<UserRole> roles;
 
     @Getter
+    @Setter
     private boolean active = true;
 
     boolean emailVerified = true;
@@ -66,23 +67,13 @@ public class User implements UserDetails {
         return user;
     }
 
-    // Getters & behavior
-    public boolean hasRole(UserRole role) {
-        return roles.contains(role);
-    }
-
-    public void deactivate() {
-        this.active = false;
-    }
-
-
     // ================================
     // SPRING SECURITY METHODS
     // ================================
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()
-                .map(r -> new SimpleGrantedAuthority(r.name()))
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
                 .toList();
     }
 

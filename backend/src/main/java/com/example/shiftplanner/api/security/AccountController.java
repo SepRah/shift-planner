@@ -1,5 +1,6 @@
-package com.example.shiftplanner.api.security.dto;
+package com.example.shiftplanner.api.security;
 
+import com.example.shiftplanner.api.security.dto.ChangePasswordRequestDTO;
 import com.example.shiftplanner.application.security.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
