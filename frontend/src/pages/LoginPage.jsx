@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import PasswordInput from "../components/PasswordInput.jsx";
 
 export default function LoginPage() {
     const [username, setUsername] = useState("");

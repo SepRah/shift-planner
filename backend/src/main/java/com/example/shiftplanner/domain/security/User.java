@@ -38,6 +38,8 @@ public class User implements UserDetails {
     @Getter
     private boolean active = true;
 
+    boolean emailVerified = true;
+
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Setter
