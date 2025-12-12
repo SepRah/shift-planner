@@ -14,7 +14,7 @@ public class WebConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/**")    // allow API paths
-                        .allowedOrigins("http://localhost:3000") // frontend dev server
+                        .allowedOrigins("http://localhost:5173") // frontend dev server
                         .allowedMethods("GET", "POST", "PUT", "DELETE")
                         .allowCredentials(true);
             }

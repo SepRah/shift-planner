@@ -103,7 +103,7 @@ public class SecurityConfig {
                                         AuthenticationProvider authProvider) throws Exception {
 
         http
-                .securityMatcher("/api/**")
+                .securityMatcher("/api/**","/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(
                         org.springframework.security.config.http.SessionCreationPolicy.STATELESS
@@ -115,6 +115,11 @@ public class SecurityConfig {
                         .requestMatchers("/api/system/**").hasRole("SYSTEM_ADMIN")
                         .requestMatchers("/api/admin/**").hasAnyRole("ADMIN", "SYSTEM_ADMIN")
                         .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN", "SYSTEM_ADMIN")
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 );
 
