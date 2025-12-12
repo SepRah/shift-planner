@@ -3,6 +3,7 @@ package com.example.shiftplanner.api.security;
 import com.example.shiftplanner.api.security.dto.ChangePasswordRequestDTO;
 import com.example.shiftplanner.application.security.UserService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/auth")
+@PreAuthorize("isAuthenticated()")
 public class AccountController {
 
     private final UserService userService;

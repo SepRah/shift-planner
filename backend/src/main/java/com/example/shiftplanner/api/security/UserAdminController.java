@@ -7,7 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/admin/users")
+@RequestMapping("/api/admin/users")
 @PreAuthorize("hasAnyRole('ADMIN','SYSTEM_ADMIN')")
 public class UserAdminController {
     private final UserService userService;

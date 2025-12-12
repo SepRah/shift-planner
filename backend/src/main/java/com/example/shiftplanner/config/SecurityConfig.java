@@ -16,11 +16,12 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -28,12 +29,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static org.springframework.http.HttpMethod.OPTIONS;
-import static org.springframework.security.config.Customizer.withDefaults;
-
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -82,9 +81,25 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // Public Authentication Endpoints
     @Bean
     @Order(2)
+    @Profile("dev")
+    public SecurityFilterChain swaggerChain(HttpSecurity http) throws Exception {
+        http
+                .securityMatcher(
+                        "/v3/api-docs/**",
+                        "/swagger-ui/**",
+                        "/swagger-ui.html"
+                )
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+
+        return http.build();
+    }
+
+    // Public Authentication Endpoints
+    @Bean
+    @Order(3)
     public SecurityFilterChain authChain(HttpSecurity http) throws Exception {
         http
                 .securityMatcher("/auth/**")
@@ -97,29 +112,20 @@ public class SecurityConfig {
 
     // JWT + Role-secured API
     @Bean
-    @Order(3)
+    @Order(4)
     public SecurityFilterChain apiChain(HttpSecurity http,
                                         JwtAuthFilter jwtAuthFilter,
                                         AuthenticationProvider authProvider) throws Exception {
 
         http
-                .securityMatcher("/api/**","/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
+                .securityMatcher("/api/**")
                 .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(
-                        org.springframework.security.config.http.SessionCreationPolicy.STATELESS
-                ))
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
                 .authenticationProvider(authProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/change-password").authenticated()
-                        .requestMatchers("/api/system/**").hasRole("SYSTEM_ADMIN")
-                        .requestMatchers("/api/admin/**").hasAnyRole("ADMIN", "SYSTEM_ADMIN")
-                        .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN", "SYSTEM_ADMIN")
-                        .requestMatchers(
-                                "/v3/api-docs/**",
-                                "/swagger-ui/**",
-                                "/swagger-ui.html"
-                        ).permitAll()
                         .anyRequest().authenticated()
                 );
 
