@@ -39,9 +39,10 @@ public class User implements UserDetails {
     @Setter
     private boolean active = true;
 
-    boolean emailVerified = true;
+    boolean emailVerified = false;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
     @Setter
     @Getter
@@ -67,6 +68,10 @@ public class User implements UserDetails {
         return user;
     }
 
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
     // ================================
     // SPRING SECURITY METHODS
     // ================================
