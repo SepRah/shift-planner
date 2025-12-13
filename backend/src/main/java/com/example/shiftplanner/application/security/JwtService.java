@@ -1,6 +1,7 @@
 package com.example.shiftplanner.application.security;
 
 import com.example.shiftplanner.domain.security.User;
+import com.example.shiftplanner.domain.security.UserRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -10,7 +11,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -25,10 +28,15 @@ public class JwtService {
     // -----------------------
     // Create a JWT
     // -----------------------
-    public String generateToken(User user) {
+    public String generateToken(String username, Collection<UserRole> roles) {
+
+        List<String> roleNames = roles.stream()
+                .map(Enum::name)
+                .toList();
+
         return Jwts.builder()
-                .setSubject(user.getUsername())
-                .claim("roles", user.getRoles())
+                .setSubject(username)
+                .claim("roles", roleNames)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
