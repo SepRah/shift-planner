@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import static org.springframework.security.authorization.AuthorityAuthorizationManager.hasAnyRole;
+
 /**
  * REST controller providing CRUD operations for {@link StaffMember} resources.
  * <p>
@@ -52,6 +54,7 @@ public class StaffMemberController {
      * @param createDTO DTO containing the data for the new staff member
      * @return the created staff member as {@link StaffMemberResponseDTO}
      */
+    @PreAuthorize("hasAnyRole('ADMIN','SYSTEM_ADMIN')")
     @PostMapping
     public ResponseEntity<StaffMemberResponseDTO> createStaffMember(
             @Valid @RequestBody StaffMemberCreateDTO createDTO) {
@@ -132,6 +135,7 @@ public class StaffMemberController {
      * @param updateDTO contains the fields to update (partial update)
      * @return updated staff member as {@link StaffMemberResponseDTO}
      */
+    @PreAuthorize("hasAnyRole('ADMIN','SYSTEM_ADMIN')")
     @PatchMapping("/{id}")
     public ResponseEntity<StaffMemberResponseDTO> updateStaffMember(
             @PathVariable Long id,
@@ -157,6 +161,7 @@ public class StaffMemberController {
      *
      * @param id ID of the staff member to delete
      */
+    @PreAuthorize("hasAnyRole('ADMIN','SYSTEM_ADMIN')")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteStaffMember(@PathVariable Long id) {
