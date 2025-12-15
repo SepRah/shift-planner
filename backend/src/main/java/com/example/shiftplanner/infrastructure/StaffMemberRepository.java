@@ -71,6 +71,4 @@ public interface StaffMemberRepository extends JpaRepository<StaffMember, Long> 
      * @return list of all staff members
      */
     List<StaffMember> findAllByFte(double fte);
-
-
 }
