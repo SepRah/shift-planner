@@ -28,18 +28,6 @@ public class AuthController {
     }
 
     // ---------------------------
-    // Register a new default user
-    // ---------------------------
-    @PostMapping("/registerDefault")
-    public ResponseEntity<UserResponseDTO> registerDefault(@RequestBody UserRegistrationRequestDTO dto) {
-
-        User newUser = userService.registerDefaultUser(dto);
-        UserResponseDTO response = UserMapper.toDTO(newUser);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
-
-    // ---------------------------
     // Register a new user
     // ---------------------------
     @PostMapping("/register")

@@ -37,16 +37,7 @@ public class UserService {
     }
 
     /**
-     * Registers a new default user.
-     */
-    public User registerDefaultUser(UserRegistrationRequestDTO dto) {
-        String encodedPassword = passwordEncoder.encode(dto.password());
-        User user = UserMapper.toEntity(dto, encodedPassword);
-        return userRepository.save(user);
-    }
-
-    /**
-     * Registers a new user with a given role.
+     * Registers a new user with the role "none".
      */
     public User registerUser(UserRegistrationRequestDTO dto
     ) {
@@ -94,10 +85,10 @@ public class UserService {
      */
     @Transactional
     public void updateUserRoles(Long targetUserId, Set<UserRole> newRoles) {
-
+        // Get acting user
         User actingUser = securityUtils.getCurrentUser();
 
-        // 1. Must be ADMIN or SYSTEM_ADMIN
+        // Must be ADMIN or SYSTEM_ADMIN
         boolean isAdmin =
                 actingUser.getRoles().contains(UserRole.ADMIN) ||
                         actingUser.getRoles().contains(UserRole.SYSTEM_ADMIN);
@@ -106,7 +97,7 @@ public class UserService {
             throw new AccessDeniedException("Not allowed to update roles");
         }
 
-        // 2. Only SYSTEM_ADMIN may assign SYSTEM_ADMIN
+        // Only SYSTEM_ADMIN may assign SYSTEM_ADMIN
         if (newRoles.contains(UserRole.SYSTEM_ADMIN) &&
                 !actingUser.getRoles().contains(UserRole.SYSTEM_ADMIN)) {
             throw new AccessDeniedException(
@@ -117,14 +108,14 @@ public class UserService {
         User targetUser = userRepository.findById(targetUserId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        // 3. Prevent self-demotion (optional but recommended)
+        // Prevent self-demotion
         if (actingUser.getId().equals(targetUserId) &&
                 !newRoles.contains(UserRole.ADMIN) &&
                 !newRoles.contains(UserRole.SYSTEM_ADMIN)) {
             throw new AccessDeniedException("You cannot remove your own admin role");
         }
 
-        // 4. Replace roles atomically
+        // Replace roles atomically
         targetUser.getRoles().clear();
         targetUser.getRoles().addAll(newRoles);
     }
