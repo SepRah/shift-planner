@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/admin/users")
 @PreAuthorize("hasAnyRole('ADMIN','SYSTEM_ADMIN')")
+// ---------------------------
+// Class that contains controllers for admin users
+// ---------------------------
 public class UserAdminController {
     private final UserService userService;
 

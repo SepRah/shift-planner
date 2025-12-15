@@ -17,6 +17,10 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+/**
+ * Service responsible for creating, parsing and validating JWT tokens.
+ * It is used for stateless authentication between client and backend.
+ */
 public class JwtService {
 
     @Value("${jwt.secret}")
@@ -25,9 +29,13 @@ public class JwtService {
     @Value("${jwt.expiration}")
     private long jwtExpirationMs;
 
-    // -----------------------
-    // Create a JWT
-    // -----------------------
+    /**
+     * Generates a signed JWT token for an authenticated user.
+     *
+     * @param username the user's unique identifier
+     * @param roles    the user's roles (AUTHORITIES)
+     * @return signed JWT token
+     */
     public String generateToken(String username, Collection<UserRole> roles) {
 
         List<String> roleNames = roles.stream()
@@ -43,25 +51,34 @@ public class JwtService {
                 .compact();
     }
 
-    // -----------------------
-    // Extracts username from token
-    // -----------------------
+    /**
+     * Extracts the username (subject) from a JWT token.
+     */
     public String extractUsername(String token) {
         return extractAllClaims(token).getSubject();
     }
 
-    // -----------------------
-    // Validate token
-    // -----------------------
+    /**
+     * Checks if token:
+     * 1) belongs to the given user
+     * 2) is not expired
+     */
     public boolean isTokenValid(String token, User user) {
         return user.getUsername().equals(extractUsername(token))
                 && !isExpired(token);
     }
 
+    /**
+     * Checks whether the token is expired.
+     */
     private boolean isExpired(String token) {
         return extractAllClaims(token).getExpiration().before(new Date());
     }
 
+    /**
+     * Parses the token and extracts all claims.
+     * Signature is verified automatically using the signing key.
+     */
     private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
@@ -70,6 +87,10 @@ public class JwtService {
                 .getBody();
     }
 
+    /**
+     * Creates the cryptographic signing key from the secret.
+     * Used both for signing and verifying JWTs.
+     */
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(secret.getBytes());
     }

@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
+/*
+  Class that contains all controllers for authentification
+ */
 public class AuthController {
 
     private final UserService userService;
@@ -40,7 +43,7 @@ public class AuthController {
     }
 
     // ---------------------------
-    // Login (returns JWT or session token)
+    // Login (returns JWT)
     // ---------------------------
     @PostMapping("/login")
     public ResponseEntity<AuthTokenDTO> login(@RequestBody UserLoginRequestDTO dto) {
