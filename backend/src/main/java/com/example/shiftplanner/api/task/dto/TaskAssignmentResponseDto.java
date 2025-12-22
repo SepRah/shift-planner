@@ -18,7 +18,8 @@ public class TaskAssignmentResponseDto {
     private Instant taskCreatedAt;
     private Instant taskUpdatedAt;
     private Long staffId;
-    private String staffName;
+    private String staffFirstName;
+    private String staffLastName;
     private TimeRange timeRange;
     private Boolean completed;
 }

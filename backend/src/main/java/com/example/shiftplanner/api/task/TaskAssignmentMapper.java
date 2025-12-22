@@ -15,7 +15,7 @@ public class TaskAssignmentMapper {
         TaskAssignmentResponseDto dto = new TaskAssignmentResponseDto();
         dto.setId(assignment.getId());
         dto.setStaffId(assignment.getAssignedStaff().getId());
-        dto.setStaffName(String.valueOf(assignment.getAssignedStaff().getName()));
+        // dto.setStaffName(String.valueOf(assignment.getAssignedStaff().getName()));
         dto.setTimeRange(assignment.getTimeRange());
         dto.setCompleted(assignment.getCompleted());
 
@@ -26,6 +26,11 @@ public class TaskAssignmentMapper {
             dto.setTaskQualificationLevel(assignment.getTask().getQualificationLevel());
             dto.setTaskCreatedAt(assignment.getTask().getCreatedAt());
             dto.setTaskUpdatedAt(assignment.getTask().getUpdatedAt());
+        }
+
+        if (assignment.getAssignedStaff() != null && assignment.getAssignedStaff().getName() != null) {
+            dto.setStaffFirstName(assignment.getAssignedStaff().getName().getFirstName());
+            dto.setStaffLastName(assignment.getAssignedStaff().getName().getLastName());
         }
 
         return dto;
