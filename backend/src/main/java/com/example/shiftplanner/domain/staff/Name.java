@@ -3,6 +3,7 @@ package com.example.shiftplanner.domain.staff;
 import com.example.shiftplanner.exception.DomainValidationNotNullException;
 import jakarta.persistence.Embeddable;
 import lombok.Getter;
+import lombok.ToString;
 
 /**
  * Value object representing a person's name.
@@ -16,13 +17,13 @@ import lombok.Getter;
  *   <li>lastName must not be null or blank.</li>
  * </ul>
  */
+@ToString
 @Getter
 @Embeddable
 public class Name {
 
-    @Getter
     private String firstName;
-    @Getter
+
     private String lastName;
 
     /**

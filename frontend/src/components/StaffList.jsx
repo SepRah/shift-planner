@@ -34,11 +34,9 @@ export default function StaffList({ staff, onSelect, selected }) {
             }}
             onClick={() => onSelect(member)}
           >
-            {member.name
-              ? typeof member.name === "string"
-                ? member.name
-                : member.name.firstName + " " + member.name.lastName
-              : "Unknown"}
+            {member.firstName && member.lastName
+                ? `${member.firstName} ${member.lastName}`
+                : "Unknown"}
             {member.role ? ` (${member.role})` : ""}
           </li>
         ))}

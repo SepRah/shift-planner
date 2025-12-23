@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static org.springframework.security.authorization.AuthorityAuthorizationManager.hasAnyRole;
 
 /**
@@ -61,6 +63,11 @@ public class StaffMemberController {
 
         StaffMemberResponseDTO created = staffMemberService.create(createDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+
+    @GetMapping
+    public List<StaffMemberResponseDTO> getAll() {
+        return staffMemberService.getAll();
     }
 
     /**
