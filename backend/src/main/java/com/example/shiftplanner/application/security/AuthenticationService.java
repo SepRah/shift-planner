@@ -1,7 +1,6 @@
 package com.example.shiftplanner.application.security;
 
 import com.example.shiftplanner.api.security.dto.*;
-import com.example.shiftplanner.domain.security.User;
 import com.example.shiftplanner.domain.security.UserRole;
 
 import lombok.RequiredArgsConstructor;

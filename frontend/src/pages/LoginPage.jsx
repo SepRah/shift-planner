@@ -19,13 +19,13 @@ export default function LoginPage() {
 
 
         try {
-            const data = await login({ username, password });
+            const data = await login({username, password});
             console.log("Logged in:", data);
 
             setError(null);
             setHasError(false);
-            // Redirect to homepage (wait for Sina to finish)
-            // navigate("/dashboard");
+            // Redirect to homepage
+            navigate("/home");
 
         } catch (err) {
             if (err.response?.status === 401) {
@@ -39,7 +39,7 @@ export default function LoginPage() {
 
     return (
         <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
-            <div className="card shadow p-4" style={{ maxWidth: "400px", width: "100%" }}>
+            <div className="card shadow p-4" style={{maxWidth: "400px", width: "100%"}}>
                 <h2 className="text-center mb-3">Login</h2>
                 <p className="text-center text-muted mb-4">
                     Sign in to your Shiftplanner account
@@ -77,7 +77,7 @@ export default function LoginPage() {
                                 className="btn btn-outline-secondary"
                                 onClick={() => setShowPassword(!showPassword)}
                             >
-                                {showPassword ? <FaEyeSlash /> : <FaEye />}
+                                {showPassword ? <FaEyeSlash/> : <FaEye/>}
                             </button>
                         </div>
                     </div>
