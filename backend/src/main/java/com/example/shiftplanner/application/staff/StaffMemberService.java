@@ -3,12 +3,18 @@ package com.example.shiftplanner.application.staff;
 import com.example.shiftplanner.api.staff.StaffMemberMapper;
 import com.example.shiftplanner.api.staff.dto.*;
 import com.example.shiftplanner.api.staff.dto.StaffMemberUpdateDTO;
+import com.example.shiftplanner.api.task.TaskMapper;
+import com.example.shiftplanner.api.task.dto.TaskResponseDto;
 import com.example.shiftplanner.domain.staff.StaffMember;
 import com.example.shiftplanner.domain.staff.Name;
+import com.example.shiftplanner.domain.task.Task;
 import com.example.shiftplanner.exception.DuplicateStaffMemberException;
 import com.example.shiftplanner.exception.StaffMemberNotFoundException;
 import com.example.shiftplanner.infrastructure.StaffMemberRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Application service for handling use cases related to {@link StaffMember}.
@@ -151,6 +157,13 @@ public class  StaffMemberService {
                 .findByNameFirstNameAndNameLastName(firstName, lastName)
                 .orElseThrow(StaffMemberNotFoundException::new);
         return StaffMemberMapper.toDto(staffMember);
+    }
+
+    public List<StaffMemberResponseDTO> getAll() {
+        List<StaffMember> staffMembers = staffMemberRepository.findAll();
+        return staffMembers.stream()
+                .map(StaffMemberMapper::toDto)
+                .toList();
     }
 
 }
