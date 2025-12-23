@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import {login} from "../services/authService.js";
 
@@ -7,16 +8,32 @@ export default function LoginPage() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+    const [error, setError] = useState(null);
+    const [hasError, setHasError] = useState(false);
+
+    // init navigation function
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Login:", username, password);
+
 
         try {
-            const data = await login({username, password});
+            const data = await login({ username, password });
             console.log("Logged in:", data);
+
+            setError(null);
+            setHasError(false);
+            // Redirect to homepage (wait for Sina to finish)
+            // navigate("/dashboard");
+
         } catch (err) {
-            console.error("Login failed:", err);
+            if (err.response?.status === 401) {
+                setError("Invalid username or password");
+                setHasError(true);
+            } else {
+                setError("Something went wrong. Please try again.");
+            }
         }
     };
 
@@ -34,7 +51,7 @@ export default function LoginPage() {
                         <label className="form-label">Username</label>
                         <input
                             type="text"
-                            className="form-control"
+                            className={`form-control ${hasError ? "is-invalid" : ""}`}
                             placeholder="Enter username"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
@@ -48,7 +65,7 @@ export default function LoginPage() {
                         <div className="input-group">
                             <input
                                 type={showPassword ? "text" : "password"}
-                                className="form-control"
+                                className={`form-control ${hasError ? "is-invalid" : ""}`}
                                 placeholder="Enter password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
@@ -70,6 +87,12 @@ export default function LoginPage() {
                         Login
                     </button>
                 </form>
+
+                {error && (
+                    <div className="alert alert-danger mt-2" role="alert">
+                        {error}
+                    </div>
+                )}
 
                 <p className="text-center mt-3">
                     Don’t have an account?{" "}

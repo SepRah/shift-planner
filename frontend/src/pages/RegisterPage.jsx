@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import {FaEye, FaEyeSlash} from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import PasswordInput from "../components/PasswordInput.jsx";
+import {register} from "../services/authService.js";
 
 export default function RegisterPage() {
 
@@ -9,15 +10,17 @@ export default function RegisterPage() {
     const [lastName, setLastName] = useState("");
     const [username, setUsername] = useState("");
     const [usernameTouched, setUsernameTouched] = useState(false);
+
+    const [fte, setFTE] = useState(1.0);
     const [password, setPassword] = useState("");
-    const [showPassword, setShowPassword] = useState(false);
     const [confirmPassword, setConfirmPassword] = useState("");
-    const [showConfirmPassword, setShowConfirmPW] = useState(false);
     // Set password rules
     const [passwordTouched, setPasswordTouched] = useState(false);
     const [confirmTouched, setConfirmTouched] = useState(false);
     const passwordsMatch = password === confirmPassword;
     const passwordTooShort = password.length > 0 && password.length < 8;
+
+    const [error, setError] = useState(null);
 
     // Create an example Username out of the First- and lastname
     useEffect(() => {
@@ -30,12 +33,24 @@ export default function RegisterPage() {
         setUsername(generatedUsername);
     }, [firstName, lastName, usernameTouched]);
 
+    // init navigation function
+    const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        console.log("Register:", username, password, confirmPassword);
-        // API logic comes later
+        try {
+            // Try to register
+            await register({username, password, confirmPassword, firstName, lastName, fte});
+            setError(null);
+            navigate("/register/success");
+        } catch (err) {
+            const message =
+                err.response?.data?.message || "Registration failed";
+            // Give back the error message
+            setError(message);
+        }
+
     };
 
     return (
@@ -92,6 +107,23 @@ export default function RegisterPage() {
                         />
                     </div>
 
+                    {/* FTE */}
+                    <div className="mb-3">
+                        <label className="form-label">FTE</label>
+                        <input
+                            type="number"
+                            className="form-control"
+                            placeholder="Set an FTE"
+                            value={fte}
+                            min="0"
+                            max="1"
+                            step="0.1"
+                            onChange={(e) => setFTE(Number(e.target.value))}
+                            autoComplete="off"
+                            required
+                        />
+                    </div>
+
                     {/* Password */}
                     <PasswordInput
                         label="Password"
@@ -119,10 +151,19 @@ export default function RegisterPage() {
                     />
 
                     {/* Register Button */}
-                    <button type="submit" className="btn btn-primary w-100">
+                    <button
+                        type="submit"
+                        className={
+                            `btn btn-primary w-100 ${!passwordsMatch || passwordTooShort ? "disabled" : ""}`}>
                         Register
                     </button>
                 </form>
+
+                {error && (
+                    <div className="alert alert-danger mt-3">
+                        {error}
+                    </div>
+                )}
 
                 <p className="text-center mt-3">
                     Already have an account?{" "}

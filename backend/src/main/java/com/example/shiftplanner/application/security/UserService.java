@@ -1,6 +1,6 @@
 package com.example.shiftplanner.application.security;
 
-import com.example.shiftplanner.api.security.UserMapper;
+import com.example.shiftplanner.exception.RegistrationException;
 import com.example.shiftplanner.api.security.dto.ChangePasswordRequestDTO;
 import com.example.shiftplanner.api.security.dto.UserRegistrationRequestDTO;
 import com.example.shiftplanner.domain.security.User;
@@ -11,6 +11,7 @@ import com.example.shiftplanner.domain.staff.StaffMember;
 
 import com.example.shiftplanner.exception.AccessDeniedException;
 import com.example.shiftplanner.exception.InvalidPasswordException;
+import com.example.shiftplanner.exception.UserNotFoundException;
 import com.example.shiftplanner.infrastructure.StaffMemberRepository;
 import com.example.shiftplanner.infrastructure.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -39,15 +40,15 @@ public class UserService {
     /**
      * Registers a new user with the role "none".
      */
+    @Transactional
     public User registerUser(UserRegistrationRequestDTO dto
     ) {
-
+        // Throw errors when the user or the staffmember already exists
         if (userRepository.existsByUsername(dto.username())) {
-            throw new IllegalArgumentException("Username already taken");
+            throw new RegistrationException("Username already taken");
         }
-
         if (staffmemberRepository.existsByNameFirstNameAndNameLastName(dto.firstName(), dto.lastName())) {
-            throw new IllegalArgumentException("Staffmember already exists");
+            throw new RegistrationException("Staffmember already exists");
         }
 
         String encodedPassword = passwordEncoder.encode(dto.password());
@@ -64,11 +65,12 @@ public class UserService {
     // ----------------------------
     // Private admin creation method
     // ----------------------------
+    @Transactional
     protected void registerAdminUser(String username,
                                      String rawPassword) {
 
         if (userRepository.existsByUsername(username)) {
-            throw new IllegalArgumentException("Admin username already exists");
+            throw new RegistrationException("Admin username already exists");
         }
 
         String encoded = passwordEncoder.encode(rawPassword);
@@ -127,16 +129,12 @@ public class UserService {
         return userRepository.existsByUsername(username);
     }
 
-    public boolean staffExists(String firstName, String lastName) {
-        return staffmemberRepository.existsByNameFirstNameAndNameLastName(firstName, lastName);
-    }
-
     /**
      * Lookup user by username (used by controllers or other services).
      */
     public User findByUsername(String username) {
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 
     /**

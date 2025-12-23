@@ -4,6 +4,7 @@ import com.example.shiftplanner.api.security.dto.*;
 import com.example.shiftplanner.application.security.AuthenticationService;
 import com.example.shiftplanner.application.security.UserService;
 import com.example.shiftplanner.domain.security.User;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,7 +35,7 @@ public class AuthController {
     // Register a new user
     // ---------------------------
     @PostMapping("/register")
-    public ResponseEntity<UserResponseDTO> register(@RequestBody UserRegistrationRequestDTO dto) {
+    public ResponseEntity<UserResponseDTO> register(@Valid @RequestBody UserRegistrationRequestDTO dto) {
 
         User newUser = userService.registerUser(dto);
         UserResponseDTO response = UserMapper.toDTO(newUser);
