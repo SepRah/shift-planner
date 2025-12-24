@@ -1,5 +1,6 @@
 package com.example.shiftplanner.application.security;
 
+import com.example.shiftplanner.api.security.dto.AdminUserDTO;
 import com.example.shiftplanner.exception.RegistrationException;
 import com.example.shiftplanner.api.security.dto.ChangePasswordRequestDTO;
 import com.example.shiftplanner.api.security.dto.UserRegistrationRequestDTO;
@@ -19,6 +20,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -156,5 +158,20 @@ public class UserService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
         // Change the active property
         targetUser.setActive(b);
+    }
+
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    public List<AdminUserDTO> getAllUsers() {
+        return userRepository.findAll()
+                .stream()
+                .map(user -> new AdminUserDTO(
+                        user.getId(),
+                        user.getUsername(),
+                        user.getStaffmember().getName().getFirstName(),
+                        user.getStaffmember().getName().getLastName(),
+                        user.isActive(),
+                        user.getRoles()
+                ))
+                .toList();
     }
 }

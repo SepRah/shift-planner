@@ -27,6 +27,9 @@ export async function login({ username, password}) {
         username,
         password,
     });
+    // Save the token
+    const token = response.data.token;
+    localStorage.setItem("token", token);
 
     return response.data;
 }

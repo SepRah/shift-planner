@@ -4,6 +4,8 @@ import RegisterPage from "./pages/RegisterPage.jsx";
 import RegistrationSuccessPage from "./pages/RegistrationSuccesspage.jsx";
 import PlannerPage from "./pages/PlannerPage.jsx";
 import HomePage from "./pages/HomePage.jsx";
+import AdminRoute from "./routes/AdminRoute.jsx";
+import AdminDashboard from "./pages/AdminDashboard.jsx";
 
 function App() {
     return (
@@ -22,6 +24,17 @@ function App() {
 
                 {/* Planner route */}
                 <Route path="/planner" element={<PlannerPage />} />
+
+                {/* Admin route */}
+                <Route
+                    path="/admin"
+                    element={
+                        <AdminRoute>
+                            <AdminDashboard />
+                        </AdminRoute>
+                    }
+                />
+
 
                 {/* Optional: 404 page */}
                 <Route path="*" element={<div>Page not found</div>} />
