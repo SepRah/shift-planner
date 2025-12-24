@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/auth")
 /*
-  Class that contains all controllers for authentification
+  Authentication and registration endpoints.
  */
 public class AuthController {
 
@@ -31,26 +31,53 @@ public class AuthController {
         return "Profile is active!";
     }
 
-    // ---------------------------
-    // Register a new user
-    // ---------------------------
+    /**
+     * Registers a new user.
+     *
+     * <p>
+     * Accepts validated registration data, delegates user creation to the
+     * {@link UserService}, and returns a DTO representing the newly created user.
+     * </p>
+     *
+     * <p>
+     * On success, responds with HTTP 201 (Created) and the created user data.
+     * Validation and business rule violations are handled by global exception
+     * handlers.
+     * </p>
+     *
+     * @param dto validated user registration data from the request body
+     * @return ResponseEntity containing the created user
+     */
     @PostMapping("/register")
     public ResponseEntity<UserResponseDTO> register(@Valid @RequestBody UserRegistrationRequestDTO dto) {
-
+        // Create the user
         User newUser = userService.registerUser(dto);
         UserResponseDTO response = UserMapper.toDTO(newUser);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    // ---------------------------
-    // Login (returns JWT)
-    // ---------------------------
+    /**
+     * Authenticates a user and issues a JWT.
+     *
+     * <p>
+     * Validates the provided credentials and, on successful authentication,
+     * returns a signed JWT that must be included in subsequent requests
+     * using the Authorization header.
+     * </p>
+     *
+     * <p>
+     * On success, responds with HTTP 200 (OK) and a token payload.
+     * Authentication failures are handled by global exception handlers.
+     * </p>
+     *
+     * @param dto login credentials (username and password)
+     * @return ResponseEntity containing the authentication token
+     */
     @PostMapping("/login")
     public ResponseEntity<AuthTokenDTO> login(@RequestBody UserLoginRequestDTO dto) {
 
         AuthTokenDTO token = authenticationService.login(dto);
-
         return ResponseEntity.ok(token);
     }
 }
