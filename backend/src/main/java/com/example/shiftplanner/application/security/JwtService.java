@@ -53,6 +53,8 @@ public class JwtService {
 
     /**
      * Extracts the username (subject) from a JWT token.
+     * @param token The jwt token
+     * @return the username
      */
     public String extractUsername(String token) {
         return extractAllClaims(token).getSubject();
@@ -62,6 +64,9 @@ public class JwtService {
      * Checks if token:
      * 1) belongs to the given user
      * 2) is not expired
+     * @param token The jwt token
+     * @param user The user object
+     * @return whether the token for the user is valid
      */
     public boolean isTokenValid(String token, User user) {
         return user.getUsername().equals(extractUsername(token))
@@ -70,6 +75,8 @@ public class JwtService {
 
     /**
      * Checks whether the token is expired.
+     * @param token The jwt token
+     * @return whether the token is expired
      */
     private boolean isExpired(String token) {
         return extractAllClaims(token).getExpiration().before(new Date());
@@ -78,6 +85,8 @@ public class JwtService {
     /**
      * Parses the token and extracts all claims.
      * Signature is verified automatically using the signing key.
+     * @param token The jwt token
+     * @return the claims
      */
     private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
