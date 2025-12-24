@@ -17,10 +17,6 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-/**
- * Service responsible for creating, parsing and validating JWT tokens.
- * It is used for stateless authentication between client and backend.
- */
 public class JwtService {
 
     @Value("${jwt.secret}")
