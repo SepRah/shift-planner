@@ -40,7 +40,7 @@ public class UserService {
     }
 
     /**
-     * Registers a new user with the role "none".
+     * Registers a new user with the staff role "none".
      */
     @Transactional
     public User registerUser(UserRegistrationRequestDTO dto
@@ -64,9 +64,11 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    // ----------------------------
-    // Private admin creation method
-    // ----------------------------
+    /**
+     * Private admin creation method
+     * @param username the admin username
+     * @param rawPassword The raw pw
+     */
     @Transactional
     protected void registerAdminUser(String username,
                                      String rawPassword) {
@@ -86,6 +88,8 @@ public class UserService {
 
     /**
      * Admin-only: assign/update additional USER roles.
+     * @param targetUserId the targeted user to be changed
+     * @param newRoles The newly set of roles
      */
     @Transactional
     public void updateUserRoles(Long targetUserId, Set<UserRole> newRoles) {
@@ -126,6 +130,8 @@ public class UserService {
 
     /**
      * Checks if a username exits
+     * @param username the user's unique username
+     * @return a bool
      */
     public boolean usernameExists(String username) {
         return userRepository.existsByUsername(username);
@@ -133,6 +139,7 @@ public class UserService {
 
     /**
      * Lookup user by username (used by controllers or other services).
+     * @param username the user's unique username
      */
     public User findByUsername(String username) {
         return userRepository.findByUsername(username)
@@ -141,7 +148,10 @@ public class UserService {
 
     /**
      * Lets the user change its password.
+     *  @param username the user's unique username
+     *  @param dto the request dto
      */
+    @Transactional
     public void changePassword(String username, ChangePasswordRequestDTO dto) {
         User user = findByUsername(username);
 
@@ -153,13 +163,22 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void setUserActive(Long userId, boolean b) {
+    /**
+     * Toggles user activity.
+     * @param userId the user's unique identifier
+     * @param activity whether the user should be active or not
+     */
+    @Transactional
+    public void setUserActive(Long userId, boolean activity) {
         User targetUser = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
         // Change the active property
-        targetUser.setActive(b);
+        targetUser.setActive(activity);
     }
 
+    /**
+     * Returns all users for the admin dashboard.
+     */
     @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public List<AdminUserDTO> getAllUsers() {
         return userRepository.findAll()
