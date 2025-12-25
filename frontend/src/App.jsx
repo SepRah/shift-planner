@@ -6,6 +6,7 @@ import PlannerPage from "./pages/PlannerPage.jsx";
 import HomePage from "./pages/HomePage.jsx";
 import AdminRoute from "./routes/AdminRoute.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
+import UnauthorizedPage from "./pages/UnauthorizedPage.jsx";
 
 function App() {
     return (
@@ -35,7 +36,8 @@ function App() {
                     }
                 />
 
-
+                {/* Unauthorized */}
+                <Route path="/unauthorized" element={<UnauthorizedPage />} />
                 {/* Optional: 404 page */}
                 <Route path="*" element={<div>Page not found</div>} />
             </Routes>
