@@ -24,6 +24,7 @@ export default function RegisterPage() {
 
     // Create an example Username out of the First- and lastname
     useEffect(() => {
+        document.title = "Shiftplanner – Register";
         if (usernameTouched) return;
 
         const generatedUsername =

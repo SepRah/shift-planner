@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
@@ -10,6 +10,11 @@ export default function LoginPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState(null);
     const [hasError, setHasError] = useState(false);
+
+    // Adjust page title
+    useEffect(() => {
+        document.title = "Shiftplanner – Login";
+    })
 
     // init navigation function
     const navigate = useNavigate();

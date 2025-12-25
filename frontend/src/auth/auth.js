@@ -1,5 +1,10 @@
 import { jwtDecode } from "jwt-decode";
 
+/**
+ * Decodes the jwt token.
+ *
+ * Fetches the token from the local storage and decodes it.
+ */
 export function decodeToken() {
     const token = localStorage.getItem("token");
 
@@ -15,6 +20,11 @@ export function decodeToken() {
     }
 }
 
+/**
+ * Returns the user roles.
+ *
+ * From the decoded jwt token.
+ */
 export function getUserRoles() {
     const decoded = decodeToken();
     return decoded?.roles ?? [];

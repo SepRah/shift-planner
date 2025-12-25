@@ -29,14 +29,16 @@ public class UserService {
     private final UserRepository userRepository;
     private final StaffMemberRepository staffmemberRepository;
     private final PasswordEncoder passwordEncoder;
-    private SecurityUtils securityUtils;
+    private final SecurityUtils securityUtils;
 
     public UserService(UserRepository userRepository,
                        StaffMemberRepository staffmemberRepository,
-                       PasswordEncoder passwordEncoder) {
+                       PasswordEncoder passwordEncoder,
+                       SecurityUtils securityUtils) {
         this.userRepository = userRepository;
         this.staffmemberRepository = staffmemberRepository;
         this.passwordEncoder = passwordEncoder;
+        this.securityUtils = securityUtils;
     }
 
     /**

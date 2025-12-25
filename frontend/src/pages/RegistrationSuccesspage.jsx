@@ -1,6 +1,12 @@
 import { Link } from "react-router-dom";
+import {useEffect} from "react";
 
 export default function RegistrationSuccessPage() {
+
+    // Adjust page title
+    useEffect(() => {
+        document.title = "Shiftplanner – Registration Successful";
+    })
     return (
         <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
             <div className="card shadow p-4 text-center" style={{ maxWidth: "420px" }}>
