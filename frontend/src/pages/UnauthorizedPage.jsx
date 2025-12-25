@@ -1,11 +1,14 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import {useEffect} from "react";
 
 export default function UnauthorizedPage() {
-    // Get the Location where the user came from
-    const location = useLocation();
-    const navigate = useNavigate();
 
-    const from = location.state?.from?.pathname || "/";
+    // Adjust page title
+    useEffect(() => {
+        document.title = "Unauthorized";
+    })
+    // Get the Location where the user came from
+    const navigate = useNavigate();
 
     return (
         <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
@@ -18,7 +21,7 @@ export default function UnauthorizedPage() {
 
                 <button
                     className="btn btn-dark w-100"
-                    onClick={() => navigate(from)}
+                    onClick={() => navigate(-1)}
                 >
                     Go back
                 </button>
