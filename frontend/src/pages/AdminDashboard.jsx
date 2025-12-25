@@ -32,6 +32,7 @@ export default function AdminDashboard() {
 
     /**
      * Sets a user active or deactivated
+     * @param user the user to be activated/deactivated
      */
     async function toggleActive(user) {
         if (user.active) {
@@ -42,12 +43,18 @@ export default function AdminDashboard() {
         loadUsers();
     }
 
+    /**
+     *
+     * @param userID The unique User id
+     * @return A List of the available roles
+     */
     async function getAvailableRoles(userID){
         fetchAvailableRoles(userID).then(setAvailableRoles);
     }
 
     /**
      * Toggles the roles
+     * @param role role to toggle
      */
     function toggleRole(role) {
         setSelectedRoles(prev =>
