@@ -3,12 +3,13 @@ import {
     fetchAllUsers,
     activateUser,
     deactivateUser,
-    updateUserRoles
+    updateUserRoles, fetchAvailableRoles
 } from "../api/adminApi";
 import Navbar from "../components/Navbar";
 
 export default function AdminDashboard() {
     const [users, setUsers] = useState([]);
+    const [availableRoles, setAvailableRoles] = useState([]);
 
     const [selectedUser, setSelectedUser] = useState(null);
     const [selectedRoles, setSelectedRoles] = useState([]);
@@ -39,6 +40,10 @@ export default function AdminDashboard() {
             await activateUser(user.id);
         }
         loadUsers();
+    }
+
+    async function getAvailableRoles(userID){
+        fetchAvailableRoles(userID).then(setAvailableRoles);
     }
 
     /**
@@ -114,6 +119,7 @@ export default function AdminDashboard() {
                                             onClick={() => {
                                                 setSelectedUser(user);
                                                 setSelectedRoles(user.roles);
+                                                getAvailableRoles(user.id);
                                             }}
                                         >
                                             Update roles
@@ -145,7 +151,7 @@ export default function AdminDashboard() {
                         </div>
 
                         <div className="modal-body">
-                            {["USER", "ADMIN", "SYSTEM_ADMIN"].map(role => (
+                            {availableRoles.map(role => (
                                 <div className="form-check" key={role}>
                                     <input
                                         className="form-check-input"

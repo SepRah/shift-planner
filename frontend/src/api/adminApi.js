@@ -13,6 +13,7 @@ export async function fetchAllUsers() {
 
 /**
  * Deactivates a user via PUT request
+ * @param userId the unique user ID
  */
 export async function deactivateUser(userId) {
     await api.put(`/api/admin/users/${userId}/deactivate`);
@@ -20,6 +21,7 @@ export async function deactivateUser(userId) {
 
 /**
  * Activates a user via PUT request
+ * @param userId the unique user ID
  */
 export async function activateUser(userId) {
     await api.put(`/api/admin/users/${userId}/activate`);
@@ -27,10 +29,22 @@ export async function activateUser(userId) {
 
 /**
  * Updates the user roles
+ * @param userId the unique user ID
+ * @param roles Set of roles
  */
 export async function updateUserRoles(userId, roles) {
     console.log(roles)
     await api.put(`/api/admin/users/${userId}/roles`, {
         roles: roles
     });
+}
+
+/**
+ * Fetches the user available roles from the backend
+ * @param userId the unique user ID
+ * @return The roles
+ */
+export async function fetchAvailableRoles(userId) {
+    const response = await api.get(`/api/admin/users/${userId}/assignable-roles`);
+    return response.data;
 }

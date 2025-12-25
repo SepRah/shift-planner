@@ -20,6 +20,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -42,7 +43,18 @@ public class UserService {
     }
 
     /**
+     * Validates the password so that it contains at least 8 characterss
+     * @param rawPassword the raw password
+     */
+    private void validatePassword(String rawPassword) {
+        if (rawPassword.length() < 8) {
+            throw new InvalidPasswordException("Password must be at least 8 characters");
+        }
+    }
+
+    /**
      * Registers a new user with the staff role "none".
+     * @param dto the registration dto
      */
     @Transactional
     public User registerUser(UserRegistrationRequestDTO dto
@@ -54,6 +66,9 @@ public class UserService {
         if (staffmemberRepository.existsByNameFirstNameAndNameLastName(dto.firstName(), dto.lastName())) {
             throw new RegistrationException("Staffmember already exists");
         }
+
+        // validate the password
+        validatePassword(dto.password());
 
         String encodedPassword = passwordEncoder.encode(dto.password());
 
@@ -89,6 +104,32 @@ public class UserService {
     }
 
     /**
+     * Returns the roles that the currently authenticated user
+     * is allowed to assign to another user.
+     *
+     * <p>
+     * SYSTEM_ADMIN users may assign all roles.
+     * ADMIN users may not assign the SYSTEM_ADMIN role.
+     * </p>
+     *
+     * @return list of assignable role names
+     */
+    public List<String> getAssignableUserRoles() {
+        User actingUser = securityUtils.getCurrentUser();
+
+        boolean isSystemAdmin =
+                actingUser.getRoles().contains(UserRole.SYSTEM_ADMIN);
+
+        return Arrays.stream(UserRole.values())
+                .filter(role ->
+                        // Only SYSTEM_ADMIN may assign SYSTEM_ADMIN
+                        isSystemAdmin || role != UserRole.SYSTEM_ADMIN
+                )
+                .map(Enum::name)
+                .toList();
+    }
+
+    /**
      * Admin-only: assign/update additional USER roles.
      * @param targetUserId the targeted user to be changed
      * @param newRoles The newly set of roles
@@ -97,11 +138,23 @@ public class UserService {
     public void updateUserRoles(Long targetUserId, Set<UserRole> newRoles) {
         // Get acting user
         User actingUser = securityUtils.getCurrentUser();
+        // Get target user
+        User targetUser = userRepository.findById(targetUserId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         // Must be ADMIN or SYSTEM_ADMIN
         boolean isAdmin =
                 actingUser.getRoles().contains(UserRole.ADMIN) ||
                         actingUser.getRoles().contains(UserRole.SYSTEM_ADMIN);
+
+        boolean actingIsSystemAdmin =
+                actingUser.getRoles().contains(UserRole.SYSTEM_ADMIN);
+
+        boolean targetIsAdmin =
+                targetUser.getRoles().contains(UserRole.ADMIN);
+
+        boolean adminRoleRemoved =
+                targetIsAdmin && !newRoles.contains(UserRole.ADMIN);
 
         if (!isAdmin) {
             throw new AccessDeniedException("Not allowed to update roles");
@@ -115,8 +168,12 @@ public class UserService {
             );
         }
 
-        User targetUser = userRepository.findById(targetUserId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        // Only SYSTEM_ADMIN may downgrade an ADMIN
+        if (adminRoleRemoved && !actingIsSystemAdmin) {
+            throw new AccessDeniedException(
+                    "Only SYSTEM_ADMIN may downgrade another ADMIN user"
+            );
+        }
 
         // Prevent self-demotion
         if (actingUser.getId().equals(targetUserId) &&
@@ -157,9 +214,16 @@ public class UserService {
     public void changePassword(String username, ChangePasswordRequestDTO dto) {
         User user = findByUsername(username);
 
+        // Examine the new password
         if (!passwordEncoder.matches(dto.oldPassword(), user.getPasswordHash())) {
             throw new InvalidPasswordException("Old password is incorrect");
         }
+        if (passwordEncoder.matches(dto.newPassword(), user.getPasswordHash())) {
+            throw new InvalidPasswordException("New password must be different");
+        }
+
+        // validate the new password
+        validatePassword(dto.newPassword());
 
         user.setPasswordHash(passwordEncoder.encode(dto.newPassword()));
         userRepository.save(user);

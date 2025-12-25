@@ -21,9 +21,11 @@ public class AccountController {
         this.userService = userService;
     }
 
-    // ---------------------------
-    // Change password (authenticated user)
-    // ---------------------------
+    /**
+     * Changes the password of an authenticated user
+     * @param dto The dto contain the old and new password
+     * @return ResponseEntity with no content
+     */
     @PostMapping("/change-password")
     public ResponseEntity<String> changePassword(
             @RequestBody ChangePasswordRequestDTO dto) {
@@ -35,7 +37,7 @@ public class AccountController {
 
         userService.changePassword(username, dto);
 
-        return ResponseEntity.ok("Password changed successfully");
+        return ResponseEntity.noContent().build();
     }
 }
 
