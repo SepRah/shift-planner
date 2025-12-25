@@ -2,7 +2,8 @@ import {useEffect, useState} from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import {login} from "../services/authService.js";
+import {login as loginAPI} from "../services/authService.js";
+import {useAuth} from "../context/AuthContext.jsx";
 
 export default function LoginPage() {
     const [username, setUsername] = useState("");
@@ -18,14 +19,15 @@ export default function LoginPage() {
 
     // init navigation function
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-
         try {
-            const data = await login({username, password});
-            console.log("Logged in:", data);
+            const data = await loginAPI({username, password});
+            // Save the token
+            login(data.token);
 
             setError(null);
             setHasError(false);

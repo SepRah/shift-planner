@@ -4,9 +4,10 @@ import RegisterPage from "./pages/RegisterPage.jsx";
 import RegistrationSuccessPage from "./pages/RegistrationSuccesspage.jsx";
 import PlannerPage from "./pages/PlannerPage.jsx";
 import HomePage from "./pages/HomePage.jsx";
-import AdminRoute from "./routes/AdminRoute.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
+import UserDashboard from "./pages/UserDashboard.jsx";
 import UnauthorizedPage from "./pages/UnauthorizedPage.jsx";
+import ProtectedRoute from "./routes/ProtectedRoute.jsx";
 
 function App() {
     return (
@@ -15,10 +16,15 @@ function App() {
                 {/* Default route -> go to /login */}
                 <Route path="/" element={<Navigate to="/login" />} />
 
-                {/* Auth routes */}
+                {/* Public routes */}
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/register/success" element={<RegistrationSuccessPage />} />
+
+                {/* Authenticated */}
+                <Route element={<ProtectedRoute />}>
+                    <Route path="/account" element={<UserDashboard />} />
+                </Route>
 
                 {/* Homepage route */}
                 <Route path="/home" element={<HomePage />} />
@@ -27,14 +33,9 @@ function App() {
                 <Route path="/planner" element={<PlannerPage />} />
 
                 {/* Admin route */}
-                <Route
-                    path="/admin"
-                    element={
-                        <AdminRoute>
-                            <AdminDashboard />
-                        </AdminRoute>
-                    }
-                />
+                <Route element={<ProtectedRoute requiredRoles={["SYSTEM_ADMIN", "ADMIN"]} />}>
+                    <Route path="/admin" element={<AdminDashboard />} />
+                </Route>
 
                 {/* Unauthorized */}
                 <Route path="/unauthorized" element={<UnauthorizedPage />} />
