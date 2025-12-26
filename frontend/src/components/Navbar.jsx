@@ -5,13 +5,19 @@ export default function Navbar() {
     return (
         <nav className="navbar navbar-expand-lg navbar-dark">
             <div className="container-fluid">
-                <Link className="navbar-brand" to="/">
+                <Link className="navbar-brand" to="/home">
                     ShiftPlanner
                 </Link>
 
                 <ul className="navbar-nav">
                     <li className="nav-item">
                         <Link className="nav-link" to="/home">
+                            Home
+                        </Link>
+                    </li>
+
+                    <li className="nav-item">
+                        <Link className="nav-link" to="/account">
                             Personal Data
                         </Link>
                     </li>
