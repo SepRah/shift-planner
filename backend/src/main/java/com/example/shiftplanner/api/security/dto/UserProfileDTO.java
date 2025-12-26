@@ -4,6 +4,7 @@ import com.example.shiftplanner.domain.staff.QualificationLevel;
 
 public record UserProfileDTO(
         Long id,
+        Long staffID,
         String username,
         String firstName,
         String lastName,

@@ -272,6 +272,7 @@ public class UserService {
 
         return new UserProfileDTO(
                 user.getId(),
+                user.getStaffmember().getId(),
                 user.getUsername(),
                 user.getStaffmember().getName().getFirstName(),
                 user.getStaffmember().getName().getLastName(),
