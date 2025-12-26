@@ -1,6 +1,7 @@
 package com.example.shiftplanner.application.security;
 
 import com.example.shiftplanner.api.security.dto.AdminUserDTO;
+import com.example.shiftplanner.api.security.dto.UserProfileDTO;
 import com.example.shiftplanner.exception.RegistrationException;
 import com.example.shiftplanner.api.security.dto.ChangePasswordRequestDTO;
 import com.example.shiftplanner.api.security.dto.UserRegistrationRequestDTO;
@@ -258,5 +259,24 @@ public class UserService {
                         user.getRoles()
                 ))
                 .toList();
+    }
+
+    /**
+     * Returns the DTO for the user dashboard
+     * @param username The users unique username
+     * @return UserProfileDTO
+     */
+    public UserProfileDTO getProfileByUsername(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        return new UserProfileDTO(
+                user.getId(),
+                user.getUsername(),
+                user.getStaffmember().getName().getFirstName(),
+                user.getStaffmember().getName().getLastName(),
+                user.getStaffmember().getStaffQualificationLevel(),
+                user.getStaffmember().getFte()
+        );
     }
 }

@@ -6,7 +6,7 @@ export default function ProtectedRoute({ requiredRoles }) {
 
     // Wait until auth state is restored
     if (loading) {
-        return null; // or a spinner
+        return null;
     }
     // Not logged in
     if (!user) {

@@ -17,7 +17,7 @@ export function AuthProvider({ children }) {
         localStorage.setItem("token", token);
 
         const decoded = jwtDecode(token);
-
+        // Adjust the user roles for frontend
         setUser({
             username: decoded.sub,
             roles: (decoded.roles || []).map(role =>

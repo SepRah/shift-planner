@@ -33,7 +33,6 @@ export async function activateUser(userId) {
  * @param roles Set of roles
  */
 export async function updateUserRoles(userId, roles) {
-    console.log(roles)
     await api.put(`/api/admin/users/${userId}/roles`, {
         roles: roles
     });

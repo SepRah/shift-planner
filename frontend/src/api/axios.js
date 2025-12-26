@@ -19,5 +19,20 @@ api.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
+// Check whether the api response is valid with the token
+api.interceptors.response.use(
+    response => response,
+    error => {
+        if (error.response?.status === 401) {
+            localStorage.removeItem("token");
+            // Prevent redirection loop
+            if (window.location.pathname !== "/login") {
+                window.location.href = "/login";
+            }
+        }
+        return Promise.reject(error);
+    }
+);
+
 
 export default api;
