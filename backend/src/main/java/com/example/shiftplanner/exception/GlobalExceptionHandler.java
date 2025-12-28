@@ -28,4 +28,10 @@ public class GlobalExceptionHandler {
     public Map<String, String> handleAccessDenied() {
         return Map.of("message", "Access denied");
     }
+
+    @ExceptionHandler(InvalidPasswordException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleInvalidPassword(InvalidPasswordException ex) {
+        return Map.of("message", ex.getMessage());
+    }
 }

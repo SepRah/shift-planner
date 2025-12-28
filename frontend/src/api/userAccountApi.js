@@ -10,13 +10,29 @@ export async function getMe(){
 }
 
 /**
+ * Returns the correct qualification for depiction
+ * @param {"NONE" | "MANAGER" | "SENIOR" | "JUNIOR"} rawQualification The raw user Qualification
+ */
+export function getAdjustedQualification(rawQualification){
+    switch (rawQualification) {
+        case "MANAGER":
+            return "Manager";
+        case "SENIOR":
+            return "Senior Staff";
+        case "JUNIOR":
+            return "Junior Staff";
+        default:
+            return "No qualification";
+    }
+}
+/**
  * Changes the password of the user
- * @param oldPassword the old Password
- * @param newPassword the new password
+ * @param {string} oldPassword the old Password
+ * @param {string} newPassword the new password
  * @return the  data
  */
 export async function changePassword(oldPassword, newPassword){
-    const response = await api.post("/api/change-password", {
+    const response = await api.post("/api/users/change-password", {
         oldPassword: oldPassword,
         newPassword: newPassword
     });

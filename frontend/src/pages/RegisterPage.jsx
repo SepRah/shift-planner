@@ -127,6 +127,7 @@ export default function RegisterPage() {
 
                     {/* Password */}
                     <PasswordInput
+                        id="Password"
                         label="Password"
                         placeholder="Choose a password"
                         value={password}
@@ -140,6 +141,7 @@ export default function RegisterPage() {
 
                     {/* Confirm Password */}
                     <PasswordInput
+                        id="Confirm password"
                         label="Confirm password"
                         placeholder="Repeat your password"
                         value={confirmPassword}
