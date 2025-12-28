@@ -11,9 +11,7 @@ export default function PlannerPage() {
 
   // Load staff and tasks from API on mount
   useEffect(() => {
-    const token =
-      localStorage.getItem("token") ||
-      "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pblVzZXIiLCJyb2xlcyI6WyJTWVNURU1fQURNSU4iXSwiaWF0IjoxNzY2NDEzNDkyLCJleHAiOjE3NjY0OTk4OTJ9.JLoBp9EjYkNyP2lpTDVow7G5epAHWY_0KL1s7GDS9JI";
+    const token = localStorage.getItem("token");
 
     // Staff
     fetch("http://localhost:8080/api/staffmembers", {
@@ -88,13 +86,10 @@ export default function PlannerPage() {
 
   // Funktion zum Hinzufügen eines neuen Tasks
   const addTask = (taskData) => {
-    const token =
-      localStorage.getItem("token") ||
-      "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pblVzZXIiLCJyb2xlcyI6WyJTWVNURU1fQURNSU4iXSwiaWF0IjoxNzY2NDEzNDkyLCJleHAiOjE3NjY0OTk4OTJ9.JLoBp9EjYkNyP2lpTDVow7G5epAHWY_0KL1s7GDS9JI";
     fetch("http://localhost:8080/api/tasks", {
       method: "POST",
       headers: {
-        Authorization: token ? `Bearer ${token}` : undefined,
+        Authorization: localStorage.getItem("token") ? `Bearer ${localStorage.getItem("token")}` : undefined,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(taskData),
@@ -116,14 +111,10 @@ export default function PlannerPage() {
 
   // Handler für Drag & Drop/Resize
   const handleEventChange = (event) => {
-    const token =
-      localStorage.getItem("token") ||
-      "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pblVzZXIiLCJyb2xlcyI6WyJTWVNURU1fQURNSU4iXSwiaWF0IjoxNzY2NDEzNDkyLCJleHAiOjE3NjY0OTk4OTJ9.JLoBp9EjYkNyP2lpTDVow7G5epAHWY_0KL1s7GDS9JI";
-    // PUT auf /api/task-assignments/{id}
     fetch(`http://localhost:8080/api/task-assignments/${event.id}`, {
       method: "PUT",
       headers: {
-        Authorization: token ? `Bearer ${token}` : undefined,
+        Authorization: localStorage.getItem("token") ? `Bearer ${localStorage.getItem("token")}` : undefined,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({

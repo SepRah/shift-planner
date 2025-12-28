@@ -40,6 +40,7 @@ public class TaskMapper {
         if (task == null) return null;
 
         TaskResponseDto dtoResponse = new TaskResponseDto();
+        dtoResponse.setId(task.getId());
         dtoResponse.setName(task.getName());
         dtoResponse.setDescription(task.getDescription());
         dtoResponse.setQualificationLevel(task.getQualificationLevel());

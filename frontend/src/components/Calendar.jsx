@@ -76,24 +76,33 @@ export default function CalendarComponent({ events, onEventDrop, onEventResize, 
         events={events}
         eventDrop={(info) => onEventDrop && onEventDrop(info.event)}
         eventResize={(info) => onEventResize && onEventResize(info.event)}
+        eventAdd={null}
         eventReceive={async (info) => {
+          // Remove event immediately to prevent double POST
+          info.event.remove();
+
           const { taskId, staffId } = info.event.extendedProps;
-          const token =
-            localStorage.getItem("token") ||
-            "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pblVzZXIiLCJyb2xlcyI6WyJTWVNURU1fQURNSU4iXSwiaWF0IjoxNzY2NDEzNDkyLCJleHAiOjE3NjY0OTk4OTJ9.JLoBp9EjYkNyP2lpTDVow7G5epAHWY_0KL1s7GDS9JI";
+
+          // Set default end time if not set (+1 hour)
+          let start = info.event.start;
+          let end = info.event.end;
+          if (!end && start) {
+            end = new Date(start.getTime() + 60 * 60 * 1000);
+          }
+
           if (taskId && staffId) {
             const res = await fetch("http://localhost:8080/api/task-assignments", {
               method: "POST",
               headers: {
-                Authorization: token ? `Bearer ${token}` : undefined,
+                Authorization: localStorage.getItem("token") ? `Bearer ${localStorage.getItem("token")}` : undefined,
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
                 taskId: Number(taskId),
                 staffId: Number(staffId),
                 timeRange: {
-                  start: info.event.start?.toISOString(),
-                  end: info.event.end?.toISOString(),
+                  start: start?.toISOString(),
+                  end: end?.toISOString(),
                 }
               }),
             });
@@ -101,11 +110,9 @@ export default function CalendarComponent({ events, onEventDrop, onEventResize, 
               const assignment = await res.json();
               if (onTaskAssigned) onTaskAssigned(assignment);
             } else {
-              info.event.remove();
               alert("TaskAssignment konnte nicht erstellt werden!");
             }
           } else {
-            info.event.remove();
             alert("Bitte zuerst einen Mitarbeiter auswählen und dann Task ziehen!");
           }
         }}

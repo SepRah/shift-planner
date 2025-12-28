@@ -3,18 +3,7 @@ import React, { useEffect, useState } from "react";
 export default function StaffList({ staff, onSelect, selected }) {
   const [localStaff, setLocalStaff] = useState([]);
 
-  useEffect(() => {
-    if (staff && staff.length > 0) {
-      setLocalStaff(staff);
-    } else {
-      // Dummy-Liste, falls keine StaffMember geladen werden konnten
-      setLocalStaff([
-        { id: "dummyA", name: "Mitarbeiter A" },
-        { id: "dummyB", name: "Mitarbeiter B" },
-        { id: "dummyC", name: "Mitarbeiter C" },
-      ]);
-    }
-  }, [staff]);
+  useEffect(() => setLocalStaff(staff ?? []), [staff]);
 
   return (
     <div>
