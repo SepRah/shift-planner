@@ -14,6 +14,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TaskResponseDto {
+    private Long id;
     private String name;
     private String description;
     private QualificationLevel qualificationLevel;

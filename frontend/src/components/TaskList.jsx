@@ -6,15 +6,13 @@ export default function TaskList({ tasks, selectedStaff, onAddTask }) {
   const [qualificationLevels, setQualificationLevels] = useState([]);
   const [newTaskQualification, setNewTaskQualification] = useState("");
   const [removeAfterAssign, setRemoveAfterAssign] = useState(false);
-  const [taskStaffMap, setTaskStaffMap] = useState({}); // taskId -> staffName
+  const [taskStaffMap, setTaskStaffMap] = useState({}); // taskId -> {id, name}
 
   useEffect(() => {
-    const token =
-      localStorage.getItem("token") ||
-      "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pblVzZXIiLCJyb2xlcyI6WyJTWVNURU1fQURNSU4iXSwiaWF0IjoxNzY2NDEzNDkyLCJleHAiOjE3NjY0OTk4OTJ9.JLoBp9EjYkNyP2lpTDVow7G5epAHWY_0KL1s7GDS9JI";
+    
     fetch("http://localhost:8080/api/qualification-levels", {
       headers: {
-        Authorization: token ? `Bearer ${token}` : undefined,
+        Authorization: localStorage.getItem("token") ? `Bearer ${localStorage.getItem("token")}` : undefined,
         "Content-Type": "application/json",
       },
     })
@@ -41,12 +39,25 @@ export default function TaskList({ tasks, selectedStaff, onAddTask }) {
   // Task anklicken: Wenn Mitarbeiter ausgewählt, Task markieren und Staff zuordnen
   const handleTaskClick = (task) => {
     if (selectedStaff) {
+      let staffName = "";
+      if (selectedStaff.firstName && selectedStaff.lastName) {
+        staffName = `${selectedStaff.firstName} ${selectedStaff.lastName}`;
+      } else if (
+        selectedStaff.name &&
+        typeof selectedStaff.name === "object"
+      ) {
+        const first = selectedStaff.name.firstName || "";
+        const last = selectedStaff.name.lastName || "";
+        staffName = [first, last].filter(Boolean).join(" ");
+      } else if (selectedStaff.name) {
+        staffName = selectedStaff.name;
+      }
       setTaskStaffMap((prev) => ({
         ...prev,
-        [task.id]:
-          typeof selectedStaff.name === "string"
-            ? selectedStaff.name
-            : selectedStaff.name.firstName + " " + selectedStaff.name.lastName,
+        [task.id]: {
+          id: selectedStaff.id,
+          name: staffName,
+        },
       }));
     }
   };
@@ -58,11 +69,6 @@ export default function TaskList({ tasks, selectedStaff, onAddTask }) {
       <h3>Tasks</h3>
       <ul className="task-draggable-list" style={{ listStyle: "none", padding: 0 }}>
         {tasks.map((task, idx) => {
-          // Hole die zuletzt zugeordnete staffId explizit aus taskStaffMap (nicht selectedStaff!)
-          const staffName = taskStaffMap[task.id];
-          // Speichere staffId direkt im taskStaffMap, wenn Task angeklickt wird:
-          // taskStaffMap[task.id] = { name: ..., id: ... }
-          // Daher: taskStaffMap[task.id]?.id und taskStaffMap[task.id]?.name
           const staffObj = taskStaffMap[task.id];
           const staffId = staffObj && staffObj.id ? staffObj.id : "";
           const staffDisplayName = staffObj && staffObj.name ? staffObj.name : "";
@@ -82,24 +88,9 @@ export default function TaskList({ tasks, selectedStaff, onAddTask }) {
                 background: "#f0f7ff",
                 border: "1px solid #ddd",
                 cursor: "pointer",
-                opacity: isDummyStaff ? 0.5 : 1,
-                pointerEvents: isDummyStaff ? "none" : "auto",
               }}
-              draggable={!isDummyStaff}
-              onClick={() => {
-                if (selectedStaff) {
-                  setTaskStaffMap((prev) => ({
-                    ...prev,
-                    [task.id]: {
-                      id: selectedStaff.id,
-                      name:
-                        typeof selectedStaff.name === "string"
-                          ? selectedStaff.name
-                          : selectedStaff.name.firstName + " " + selectedStaff.name.lastName,
-                    },
-                  }));
-                }
-              }}
+              draggable={true}
+              onClick={() => handleTaskClick(task)}
             >
               {staffDisplayName && (
                 <span style={{ color: "#1976d2", fontWeight: "bold" }}>

@@ -18,6 +18,11 @@ public interface TaskAssignmentRepository extends JpaRepository<TaskAssignment, 
 
     List<TaskAssignment> findByAssignedStaff_IdAndTimeRange_StartBetween(Long staffId, Instant start, Instant end);
 
+    // Prüfe, ob es ein Assignment für Task, Staff und exakten Zeitraum gibt
+    List<TaskAssignment> findByTask_IdAndAssignedStaff_IdAndTimeRange_StartAndTimeRange_End(
+        Long taskId, Long staffId, Instant start, Instant end
+    );
+
 
 }
 
