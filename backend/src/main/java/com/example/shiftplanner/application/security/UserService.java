@@ -98,7 +98,7 @@ public class UserService {
         String encoded = passwordEncoder.encode(rawPassword);
         StaffMember staff = new StaffMember(new Name("System", "Administrator"), QualificationLevel.MANAGER, 1);
 
-        User admin = new User(username, encoded, Set.of(UserRole.ADMIN));
+        User admin = new User(username, encoded, Set.of(UserRole.SYSTEM_ADMIN));
         admin.setStaffmember(staff);
 
         userRepository.save(admin);
