@@ -3,6 +3,7 @@ package com.example.shiftplanner.application.security;
 import com.example.shiftplanner.domain.security.User;
 import com.example.shiftplanner.domain.security.UserRole;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -11,9 +12,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,18 +29,23 @@ public class JwtService {
      * Generates a signed JWT token for an authenticated user.
      *
      * @param username the user's unique identifier
-     * @param roles    the user's roles (AUTHORITIES)
+     * @param systemRoles    the user's roles (AUTHORITIES)
+     * @param staffQualifications the qualification level
      * @return signed JWT token
      */
-    public String generateToken(String username, Collection<UserRole> roles) {
+    public String generateToken(
+            String username,
+            Set<UserRole> systemRoles,
+            Set<String> staffQualifications
+    ){
 
-        List<String> roleNames = roles.stream()
-                .map(Enum::name)
-                .toList();
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("roles", systemRoles.stream().map(Enum::name).toList());
+        claims.put("staff", staffQualifications);
 
         return Jwts.builder()
+                .setClaims(claims)
                 .setSubject(username)
-                .claim("roles", roleNames)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
@@ -61,13 +66,32 @@ public class JwtService {
      * 1) belongs to the given user
      * 2) is not expired
      * @param token The jwt token
-     * @param user The user object
      * @return whether the token for the user is valid
      */
-    public boolean isTokenValid(String token, User user) {
-        return user.getUsername().equals(extractUsername(token))
-                && !isExpired(token);
+    public boolean isTokenValid(String token) {
+        try {
+            extractAllClaims(token);
+            return true;
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
+        }
     }
+
+    @SuppressWarnings("unchecked")
+    public Set<UserRole> extractSystemRoles(String token) {
+        List<String> roles = extractAllClaims(token).get("roles", List.class);
+        if (roles == null) return Set.of();
+        return roles.stream()
+                .map(UserRole::valueOf)
+                .collect(Collectors.toSet());
+    }
+
+    @SuppressWarnings("unchecked")
+    public Set<String> extractStaffQualifications(String token) {
+        List<String> staff = extractAllClaims(token).get("staff", List.class);
+        return staff == null ? Set.of() : Set.copyOf(staff);
+    }
+
 
     /**
      * Checks whether the token is expired.

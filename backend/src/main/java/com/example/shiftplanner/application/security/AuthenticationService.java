@@ -36,16 +36,29 @@ public class AuthenticationService {
         // Get authenticated principal; works for UserDetails & OAuth2
         String username = authentication.getName();
 
-        Set<UserRole> roles = authentication.getAuthorities().stream()
+        // System roles (ROLE_*)
+        Set<UserRole> systemRoles = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .map(r -> r.replace("ROLE_", ""))
+                .filter(a -> a.startsWith("ROLE_"))
+                .map(a -> a.replace("ROLE_", ""))
                 .map(UserRole::valueOf)
                 .collect(Collectors.toSet());
 
-        // JWT should be generated from username / auth, not entity
-        String token = jwtService.generateToken(username, roles);
 
-        return new AuthTokenDTO(token, username, roles);
+        // Staff qualifications (STAFF_*)
+        Set<String> staffQualifications = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .filter(a -> a.startsWith("STAFF_"))
+                .map(a -> a.replace("STAFF_", ""))
+                .collect(Collectors.toSet());
+
+        String token = jwtService.generateToken(
+                username,
+                systemRoles,
+                staffQualifications
+        );
+
+        return new AuthTokenDTO(token, username, systemRoles);
 
     }
 

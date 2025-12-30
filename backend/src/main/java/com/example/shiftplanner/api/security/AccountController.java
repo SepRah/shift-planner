@@ -2,7 +2,9 @@ package com.example.shiftplanner.api.security;
 
 import com.example.shiftplanner.api.security.dto.ChangePasswordRequestDTO;
 import com.example.shiftplanner.api.security.dto.UserProfileDTO;
+import com.example.shiftplanner.api.staff.dto.StaffMemberUpdateDTO;
 import com.example.shiftplanner.application.security.UserService;
+import com.example.shiftplanner.application.staff.StaffMemberService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -18,9 +20,23 @@ import org.springframework.web.bind.annotation.RestController;
 public class AccountController {
 
     private final UserService userService;
+    private final StaffMemberService staffMemberService;
 
-    public AccountController(UserService userService) {
+    public AccountController(UserService userService, StaffMemberService staffMemberService) {
         this.userService = userService;
+        this.staffMemberService = staffMemberService;
+    }
+
+    /**
+     * Gets the UserProfileDTO for the user dashboard containing user information
+     * @param authentication The current user authentication
+     * @return ResponseEntity if everything worked correctly
+     */
+    @RequestMapping("/me")
+    public ResponseEntity<UserProfileDTO> getCurrentUser(Authentication authentication) {
+        String username = authentication.getName();
+        UserProfileDTO dto = userService.getProfileByUsername(username);
+        return ResponseEntity.ok(dto);
     }
 
     /**
@@ -43,15 +59,18 @@ public class AccountController {
     }
 
     /**
-     * Gets the UserProfileDTO for the user dashboard containing user information
-     * @param authentication The current user authentication
-     * @return ResponseEntity if everything worked correctly
+     * Changes the FTE of an authenticated user
+     * @param dto The dto contain new FTE
+     * @return ResponseEntity with no content
      */
-    @RequestMapping("/me")
-    public ResponseEntity<UserProfileDTO> getCurrentUser(Authentication authentication) {
-        String username = authentication.getName();
-        UserProfileDTO dto = userService.getProfileByUsername(username);
-        return ResponseEntity.ok(dto);
+    @PostMapping("/change-fte")
+    public ResponseEntity<String> changeFTE(
+            @RequestBody StaffMemberUpdateDTO dto) {
+
+//        staffMemberService.updateStaffMember(id, dto);
+
+        return ResponseEntity.noContent().build();
     }
+
 }
 

@@ -255,6 +255,7 @@ public class UserService {
                         user.getUsername(),
                         user.getStaffmember().getName().getFirstName(),
                         user.getStaffmember().getName().getLastName(),
+                        user.getStaffmember().getStaffQualificationLevel(),
                         user.isActive(),
                         user.getRoles()
                 ))

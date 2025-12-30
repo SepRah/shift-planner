@@ -9,10 +9,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
@@ -63,20 +68,31 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         // Only authenticate if not already authenticated
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            User user = userRepository.findByUsername(username)
-                    .orElse(null);
+            if (jwtService.isTokenValid(jwt)) {
 
-            if (user != null && jwtService.isTokenValid(jwt, user)) {
+                Set<GrantedAuthority> authorities = new HashSet<>();
+
+                // System roles
+                jwtService.extractSystemRoles(jwt).forEach(role ->
+                        authorities.add(new SimpleGrantedAuthority("ROLE_" + role.name()))
+                );
+
+                // Staff qualifications
+                jwtService.extractStaffQualifications(jwt).forEach(staff ->
+                        authorities.add(new SimpleGrantedAuthority("STAFF_" + staff))
+                );
+
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(
-                                user,
+                                username,
                                 null,
-                                user.getAuthorities()
+                                authorities
                         );
 
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                authToken.setDetails(
+                        new WebAuthenticationDetailsSource().buildDetails(request)
+                );
 
-                // Put user into security context
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
