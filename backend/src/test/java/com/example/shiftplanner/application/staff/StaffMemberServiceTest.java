@@ -7,8 +7,6 @@ import com.example.shiftplanner.api.staff.dto.StaffMemberUpdateDTO;
 import com.example.shiftplanner.domain.staff.Name;
 import com.example.shiftplanner.domain.staff.QualificationLevel;
 import com.example.shiftplanner.domain.staff.StaffMember;
-import com.example.shiftplanner.exception.DuplicateStaffMemberException;
-import com.example.shiftplanner.exception.StaffMemberNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
