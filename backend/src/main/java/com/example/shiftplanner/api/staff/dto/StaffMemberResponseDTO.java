@@ -16,6 +16,9 @@ import com.example.shiftplanner.domain.staff.QualificationLevel;
  * <p>
  * This DTO is produced by {@code StaffMemberMapper.toDto()} and typically used in
  * GET, POST, PATCH, and DELETE responses.
+ * @author Sina Enzmann
+ * @version 1.0
+ * @since 2025-12-07
  */
 public record StaffMemberResponseDTO(
         Long id,

@@ -29,6 +29,9 @@ import static org.springframework.security.authorization.AuthorityAuthorizationM
  * <p>
  * This controller contains no business logic. All domain rules and validations
  * are handled by the application service or the domain model.
+ * @author Sina Enzmann
+ * @version 1.0
+ * @since 2025-12-07
  */
 @RestController
 @RequestMapping("/api/staffmembers")
