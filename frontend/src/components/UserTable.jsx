@@ -1,3 +1,5 @@
+import {useMemo, useState} from "react";
+
 export default function UsersTable({
                                        users,
                                        onToggleActive,
@@ -6,23 +8,79 @@ export default function UsersTable({
                                        canEditStaffQualification,
                                        onEditStaffQualification
                                    }) {
+    // Add sorting state
+    const [sortConfig, setSortConfig] = useState({
+        key: null,
+        direction: "asc",
+    });
+
+    const sortedUsers = useMemo(() => {
+        if (!sortConfig.key) return users;
+
+        return [...users].sort((a, b) => {
+            const aVal = a[sortConfig.key] ?? "";
+            const bVal = b[sortConfig.key] ?? "";
+
+            if (typeof aVal === "string") {
+                return sortConfig.direction === "asc"
+                    ? aVal.localeCompare(bVal)
+                    : bVal.localeCompare(aVal);
+            }
+
+            return sortConfig.direction === "asc"
+                ? aVal - bVal
+                : bVal - aVal;
+        });
+    }, [users, sortConfig]);
+
+    /**
+     * Sort a given column with its key
+     * @param {string} key Value to sort for
+     * @return {string, string}
+     */
+    function requestSort(key) {
+        setSortConfig(prev => {
+            if (prev.key === key) {
+                return {
+                    key,
+                    direction: prev.direction === "asc" ? "desc" : "asc",
+                };
+            }
+            return { key, direction: "asc" };
+        });
+    }
+
     return (
         <table className="table table-striped mt-3">
             <thead>
             <tr>
-                <th>Username</th>
-                <th>Name</th>
-                {/* Staff qualification column */}
-                <th>Qualification</th>
-                {/* User roles column – admin only */}
-                {canEditUserRoles && <th>User Roles</th>}
-                <th>Status</th>
+                <th onClick={() => requestSort("username")} style={{ cursor: "pointer" }}>
+                    Username {sortConfig.key === "username" ? (sortConfig.direction === "asc" ? "▲" : "▼") : ""}
+                </th>
+
+                <th onClick={() => requestSort("lastName")} style={{ cursor: "pointer" }}>
+                    Name {sortConfig.key === "lastName" ? (sortConfig.direction === "asc" ? "▲" : "▼") : ""}
+                </th>
+
+                <th onClick={() => requestSort("staffQualificationLevel")} style={{ cursor: "pointer" }}>
+                    Qualification {sortConfig.key === "staffQualificationLevel" ? (sortConfig.direction === "asc" ? "▲" : "▼") : ""}
+                </th>
+
+                {canEditUserRoles && (
+                    <th onClick={() => requestSort("roles")} style={{ cursor: "pointer" }}>
+                        User Roles
+                    </th>
+                )}
+
+                <th onClick={() => requestSort("enabled")} style={{ cursor: "pointer" }}>
+                    Status {sortConfig.key === "enabled" ? (sortConfig.direction === "asc" ? "▲" : "▼") : ""}
+                </th>
                 <th>Actions</th>
             </tr>
             </thead>
 
             <tbody>
-            {users.map(user => (
+            {sortedUsers.map(user => (
                 <tr key={user.id}>
                     <td>{user.username}</td>
                     <td>{user.firstName} {user.lastName}</td>
