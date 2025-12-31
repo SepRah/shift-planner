@@ -24,7 +24,7 @@ export default function ManagementPage() {
     const [selectedRoles, setSelectedRoles] = useState([]);
 
     const [selectedStaffUser, setSelectedStaffUser] = useState(null);
-    const [selectedQualification, setSelectedQualification] = useState(null);
+    const [selectedQualification, setSelectedQualification] = useState([]);
 
     /**
      * Loads all users for the admin dashboard.
@@ -101,7 +101,7 @@ export default function ManagementPage() {
                 canEditStaffQualification={canManageStaffRoles(currentUser)}
                 onEditStaffQualification={(user) => {
                     setSelectedStaffUser(user);
-                    setSelectedQualification(user.qualification);
+                    setSelectedQualification(user.staffQualificationLevel);
                 }}
             />
 
@@ -111,7 +111,7 @@ export default function ManagementPage() {
                 user={selectedStaffUser}
                 title="Update staff qualification"
                 availableRoles={["JUNIOR", "SENIOR", "MANAGER"]}
-                selectedRoles={[selectedQualification]}
+                selectedRoles={selectedQualification}
                 selectionType="single"
                 onSelectRole={setSelectedQualification}
                 onSave={async () => {

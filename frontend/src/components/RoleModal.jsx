@@ -9,6 +9,7 @@ export default function RoleModal({
                                       onSelectRole,
                                       onSave
                                   }) {
+
     return (
         <div
             className="modal fade"
@@ -40,7 +41,7 @@ export default function RoleModal({
                                     checked={
                                         selectionType === "multiple"
                                             ? selectedRoles.includes(role)
-                                            : selectedRoles[0] === role
+                                            : selectedRoles === role
                                     }
                                     onChange={() =>
                                         selectionType === "multiple"

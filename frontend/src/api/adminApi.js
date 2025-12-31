@@ -3,6 +3,14 @@ import api from "./axios.js";
 /**
  * Fetches all users.
  *
+ * @typedef {Object} AdminUserDTO
+ * @property {number} id
+ * @property {string} username
+ * @property {string} firstName
+ * @property {string} lastName
+ * @property {"NONE"|"JUNIOR"|"SENIOR"|"MANAGER"} staffQualificationLevel
+ * @property {string[]} roles
+ * @property {boolean} active
  * Fetches the user list from the admin API and updates
  * the local component state used for rendering.
  */
