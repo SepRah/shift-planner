@@ -112,17 +112,29 @@ export default function UsersTable({
                                 </li>
                                 {/*Manager permission*/}
                                 {canEditStaffQualification && (
-                                    <li>
-                                        <button
-                                            className="dropdown-item"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#staffRoleModal"
-                                            onClick={() => {onEditStaffQualification(user);
-                                            }}
-                                        >
-                                            Update staff qualification
-                                        </button>
-                                    </li>
+                                    <>
+                                        <li>
+                                            <button
+                                                className="dropdown-item"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#staffRoleModal"
+                                                onClick={() => onEditStaffQualification(user)}
+                                            >
+                                                Update staff qualification
+                                            </button>
+                                        </li>
+
+                                        <li>
+                                            <button
+                                                className="dropdown-item"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#fteModal"
+                                                // onClick={() => onEditFte(user}
+                                            >
+                                                Change FTE
+                                            </button>
+                                        </li>
+                                    </>
                                 )}
 
                                 {/*Admin Permission*/}

@@ -177,9 +177,6 @@ export default function UserDashboard(){
                             <div className="card-body">
 
                                 <div className="d-flex flex-column align-items-center gap-3 m-1">
-                                    <button type="button" className="btn btn-primary w-75">
-                                        Change FTE
-                                    </button>
                                     <button
                                         type="button"
                                         className="btn btn-primary w-75"

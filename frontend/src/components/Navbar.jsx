@@ -1,6 +1,7 @@
 import { Link,useNavigate } from "react-router-dom";
 import "../styles/Navbar.css";
 import { useAuth } from "../context/AuthContext";
+import {canAccessManagementArea} from "../permissions/ManagementPermissions.js";
 
 export default function Navbar() {
     const {user, logout} = useAuth();
@@ -36,6 +37,14 @@ export default function Navbar() {
                             Planner
                         </Link>
                     </li>
+
+                    {canAccessManagementArea(user) && (
+                        <li className="nav-item">
+                            <Link className="nav-link" to="/management">
+                                Management Area
+                            </Link>
+                        </li>
+                    )}
                 </ul>
 
                 {/* Right side */}
