@@ -4,6 +4,8 @@ import com.example.shiftplanner.api.security.dto.AdminUserDTO;
 import com.example.shiftplanner.api.security.dto.UpdateUserRolesRequestDTO;
 import com.example.shiftplanner.application.security.UserService;
 
+import com.example.shiftplanner.application.staff.StaffMemberService;
+import com.example.shiftplanner.domain.staff.QualificationLevel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -12,15 +14,16 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin/users")
-@PreAuthorize("hasAnyRole('ADMIN','SYSTEM_ADMIN')")
 // ---------------------------
 // Class that contains controllers for admin users
 // ---------------------------
 public class UserAdminController {
     private final UserService userService;
+    private final StaffMemberService staffMemberService;
 
-    public UserAdminController(UserService userService) {
+    public UserAdminController(UserService userService, StaffMemberService staffMemberService) {
         this.userService = userService;
+        this.staffMemberService = staffMemberService;
     }
 
     /**
@@ -38,6 +41,7 @@ public class UserAdminController {
      * @return ResponseEntity containing a list of all users
      */
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN','SYSTEM_ADMIN')")
     public ResponseEntity<List<AdminUserDTO>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
@@ -48,12 +52,24 @@ public class UserAdminController {
      * @return A list of the roles
      */
     @GetMapping("/{userId}/assignable-roles")
+    @PreAuthorize("hasAnyRole('ADMIN','SYSTEM_ADMIN')")
     public ResponseEntity<List<String>> getAssignableRoles(
             @PathVariable Long userId) {
 
         List<String> assignableRoles = userService.getAssignableUserRoles();
 
         return ResponseEntity.ok(assignableRoles);
+    }
+
+    /**
+     * Return a list of the staff member qualifications
+     * @return A list of the staff member qualifications
+     */
+    @GetMapping("/staff-qualifications")
+    @PreAuthorize("@staffPermission.canAccessUserAdministration(authentication)")
+    public ResponseEntity<List<QualificationLevel>> getStaffMemberQualifications(){
+        List<QualificationLevel> staffMemberRoles = staffMemberService.getStaffMemberQualifications();
+        return ResponseEntity.ok(staffMemberRoles);
     }
 
     /**
@@ -73,6 +89,7 @@ public class UserAdminController {
      * @return ResponseEntity with no content
      */
     @PutMapping("/{userId}/roles")
+    @PreAuthorize("hasAnyRole('ADMIN','SYSTEM_ADMIN')")
     public ResponseEntity<Void> updateUserRoles(
             @PathVariable Long userId,
             @RequestBody UpdateUserRolesRequestDTO dto) {
@@ -95,6 +112,7 @@ public class UserAdminController {
      * @return ResponseEntity with no content
      */
     @PutMapping("/{userId}/deactivate")
+    @PreAuthorize("hasAnyRole('ADMIN','SYSTEM_ADMIN')")
     public ResponseEntity<Void> deactivateUser(@PathVariable Long userId) {
         userService.setUserActive(userId, false);
         return ResponseEntity.noContent().build();
@@ -113,6 +131,7 @@ public class UserAdminController {
      * @return ResponseEntity with no content
      */
     @PutMapping("/{userId}/activate")
+    @PreAuthorize("hasAnyRole('ADMIN','SYSTEM_ADMIN')")
     public ResponseEntity<Void> activateUser(@PathVariable Long userId) {
         userService.setUserActive(userId, true);
         return ResponseEntity.noContent().build();

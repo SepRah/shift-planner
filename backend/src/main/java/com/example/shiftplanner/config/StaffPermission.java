@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class StaffPermission {
 
-    public boolean canAssignQualification(Authentication auth) {
+    public boolean canAccessUserAdministration(Authentication auth) {
         return auth.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .anyMatch(a ->

@@ -4,7 +4,7 @@ import {
     activateUser,
     deactivateUser,
     fetchAllUsers,
-    fetchAvailableRoles,
+    fetchAvailableRoles, fetchQualifications,
     updateStaffQualification,
     updateUserRoles
 } from "../api/adminApi.js";
@@ -19,6 +19,8 @@ export default function ManagementPage() {
 
     const [users, setUsers] = useState([]);
     const [availableRoles, setAvailableRoles] = useState([]);
+
+    const [availableQualifications, setAvailableQualifications] = useState([]);
 
     const [selectedUser, setSelectedUser] = useState(null);
     const [selectedRoles, setSelectedRoles] = useState([]);
@@ -38,8 +40,12 @@ export default function ManagementPage() {
     }
 
     useEffect(() => {
-        document.title = "Shiftplanner – Admin Dashboard";
+        document.title = "Shiftplanner – Management Dashboard";
         loadUsers();
+        // Get the qualifications
+        fetchQualifications()
+            .then(setAvailableQualifications)
+            .catch(console.error);
     }, []);
 
     /**
@@ -84,7 +90,6 @@ export default function ManagementPage() {
         loadUsers();
     }
 
-
     return (
         <>
             <UsersTable
@@ -110,7 +115,7 @@ export default function ManagementPage() {
                 modalId="staffRoleModal"
                 user={selectedStaffUser}
                 title="Update staff qualification"
-                availableRoles={["JUNIOR", "SENIOR", "MANAGER"]}
+                availableRoles={availableQualifications}
                 selectedRoles={selectedQualification}
                 selectionType="single"
                 onSelectRole={setSelectedQualification}

@@ -56,6 +56,16 @@ export async function fetchAvailableRoles(userId) {
     return response.data;
 }
 
+/**
+ * Fetches the user available roles from the backend
+ * @return The qualifications
+ */
+export async function fetchQualifications() {
+    const response = await api.get(`/api/admin/users/staff-qualifications`);
+    return response.data;
+}
+
+
 export async function updateStaffQualification(staffID, roles){
 
 }
