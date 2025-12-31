@@ -24,6 +24,9 @@ import lombok.Setter;
  *   <li>FTE must always be in the range [0.0, 1.0].</li>
  *   <li>Assigning a {@link Task} checks that the required qualification level is met.</li>
  * </ul>
+ * @author Sina Enzmann
+ * @version 1.0
+ * @since 2025-12-07
  */
 @Getter
 @Setter

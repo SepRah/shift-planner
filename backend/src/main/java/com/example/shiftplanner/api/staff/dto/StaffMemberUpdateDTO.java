@@ -20,6 +20,9 @@ import com.example.shiftplanner.domain.staff.QualificationLevel;
  *   <li>All fields are optional; {@code null} means “do not modify this field”.</li>
  *   <li>Domain constraints (e.g., name validity, FTE range) are enforced in the entity.</li>
  * </ul>
+ * @author Sina Enzmann
+ * @version 1.0
+ * @since 2025-12-07
  */
 public record StaffMemberUpdateDTO(
         String firstName,

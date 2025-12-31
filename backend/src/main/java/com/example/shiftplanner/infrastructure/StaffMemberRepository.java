@@ -20,6 +20,9 @@ import java.util.Optional;
  *   <li>Looking up staff members by ID, name and fte.</li>
  *   <li>Checking existence of staff members for validation use cases.</li>
  * </ul>
+ * @author Sina Enzmann
+ * @version 1.0
+ * @since 2025-12-07
  */
 @Repository
 public interface StaffMemberRepository extends JpaRepository<StaffMember, Long> {

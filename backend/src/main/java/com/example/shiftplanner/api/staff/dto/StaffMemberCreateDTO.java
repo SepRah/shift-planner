@@ -19,6 +19,9 @@ import jakarta.validation.constraints.NotNull;
  *   <li>Validation annotations ensure that required input is present.</li>
  *   <li>{@code fte} may be {@code null}; domain or service logic may apply defaults or validate range (0.0–1.0).</li>
  * </ul>
+ * @author Sina Enzmann
+ * @version 1.0
+ * @since 2025-12-07
  */
 public record StaffMemberCreateDTO(
         @NotNull

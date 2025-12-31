@@ -7,6 +7,9 @@ package com.example.shiftplanner.domain.staff;
  *   <li>classify staff members by their experience or role,</li>
  *   <li>define which staff members are allowed to work on which tasks.</li>
  * </ul>
+ * @author Sina Enzmann & Benjamin Traffelet
+ * @version 1.0
+ * @since 2025-12-04
  */
 public enum QualificationLevel {
     NONE,           // Nothing required

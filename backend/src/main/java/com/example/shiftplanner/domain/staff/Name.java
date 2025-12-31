@@ -13,11 +13,13 @@ import lombok.ToString;
  * <p>
  * Invariants:
  * <ul>
- *   <li>firstName must not be null or blank.</li>
- *   <li>lastName must not be null or blank.</li>
+ *   <li> firstName must not be {@code null} or blank.</li>
+ *   <li>lastName must not be {@code null} or blank.</li>
  * </ul>
+ *  @author Sina Enzmann
+ *  @version 1.0
+ *  @since 2025-12-05
  */
-@ToString
 @Getter
 @Embeddable
 public class Name {

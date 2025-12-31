@@ -13,6 +13,9 @@ import com.example.shiftplanner.domain.staff.*;
  * </ul>
  * <p>
  * This class does not contain business logic – only mapping logic.
+ * @author Sina Enzmann
+ * @version 1.0
+ * @since 2025-12-07
  */
 public class StaffMemberMapper {
     /**
