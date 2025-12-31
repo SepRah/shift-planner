@@ -47,3 +47,21 @@ export async function fetchAvailableRoles(userId) {
     const response = await api.get(`/api/admin/users/${userId}/assignable-roles`);
     return response.data;
 }
+
+export async function updateStaffQualification(staffID, roles){
+
+}
+
+
+/**
+ * Changes the FTE of the user
+ * @param {number} staffId
+ * @param {number} newFte
+ */
+// export async function changeFTE({ staffId, newFte }) {
+//     const response = await api.post("/api/users/change-fte", {
+//         id: staffId,
+//         fte: newFte
+//     });
+//     return response.data;
+// }

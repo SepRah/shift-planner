@@ -32,6 +32,11 @@ export function getAdjustedQualification(rawQualification){
  * @return the  data
  */
 export async function changePassword(oldPassword, newPassword){
+
+    if (newPassword.length < 8) {
+        throw new Error("Password too short");
+    }
+
     const response = await api.post("/api/users/change-password", {
         oldPassword: oldPassword,
         newPassword: newPassword

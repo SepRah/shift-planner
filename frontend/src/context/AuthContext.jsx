@@ -17,14 +17,11 @@ export function AuthProvider({ children }) {
         localStorage.setItem("token", token);
 
         const decoded = jwtDecode(token);
-        // Adjust the user roles for frontend
+        // set the user
         setUser({
             username: decoded.sub,
-            roles: (decoded.roles || []).map(role =>
-                role.startsWith("ROLE_")
-                    ? role.replace("ROLE_", "")
-                    : role
-            )
+            roles: decoded.roles || [],          // system roles
+            staff: decoded.staff || []            // staff qualifications
         });
     };
 

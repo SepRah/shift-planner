@@ -4,10 +4,11 @@ import RegisterPage from "./pages/RegisterPage.jsx";
 import RegistrationSuccessPage from "./pages/RegistrationSuccesspage.jsx";
 import PlannerPage from "./pages/PlannerPage.jsx";
 import HomePage from "./pages/HomePage.jsx";
-import AdminDashboard from "./pages/AdminDashboard.jsx";
 import UserDashboard from "./pages/UserDashboard.jsx";
 import UnauthorizedPage from "./pages/UnauthorizedPage.jsx";
 import ProtectedRoute from "./routes/ProtectedRoute.jsx";
+import ManagementLayout from "./routes/ManagementLayout.jsx";
+import ManagementPage from "./pages/ManagementPage.jsx";
 
 function App() {
     return (
@@ -25,17 +26,25 @@ function App() {
                 <Route element={<ProtectedRoute />}>
                     <Route path="/account" element={<UserDashboard />} />
                 </Route>
+                {/* Admin route */}
+                <Route
+                    element={
+                        <ProtectedRoute
+                            requiredRoles={["ADMIN", "SYSTEM_ADMIN"]}
+                            requiredStaff={["MANAGER", "SENIOR"]}
+                        />
+                    }
+                >
+                    <Route path="/management" element={<ManagementLayout />}>
+                        <Route index element={<ManagementPage />} />
+                    </Route>
+                </Route>
 
                 {/* Homepage route */}
                 <Route path="/home" element={<HomePage />} />
 
                 {/* Planner route */}
                 <Route path="/planner" element={<PlannerPage />} />
-
-                {/* Admin route */}
-                <Route element={<ProtectedRoute requiredRoles={["SYSTEM_ADMIN", "ADMIN"]} />}>
-                    <Route path="/admin" element={<AdminDashboard />} />
-                </Route>
 
                 {/* Unauthorized */}
                 <Route path="/unauthorized" element={<UnauthorizedPage />} />
