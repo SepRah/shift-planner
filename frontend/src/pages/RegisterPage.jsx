@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import PasswordInput from "../components/PasswordInput.jsx";
 import {register} from "../services/authService.js";
+import FullLogo from "../media/FullCalendarFullLogo.svg";
 
 export default function RegisterPage() {
 
@@ -57,6 +58,7 @@ export default function RegisterPage() {
     return (
         <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
             <div className="card shadow p-4" style={{ maxWidth: "420px", width: "100%" }}>
+                <img src={FullLogo} height={130} alt="ShiftPlanner" />
                 <h2 className="text-center mb-3">Register</h2>
                 <p className="text-center text-muted mb-4">
                     Create a new Shiftplanner account

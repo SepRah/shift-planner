@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import {login as loginAPI} from "../services/authService.js";
 import {useAuth} from "../context/AuthContext.jsx";
+import FullLogo from "../media/FullCalendarFullLogo.svg";
 
 export default function LoginPage() {
     const [username, setUsername] = useState("");
@@ -47,6 +48,7 @@ export default function LoginPage() {
     return (
         <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
             <div className="card shadow p-4" style={{maxWidth: "400px", width: "100%"}}>
+                <img src={FullLogo} height={130} alt="ShiftPlanner" />
                 <h2 className="text-center mb-3">Login</h2>
                 <p className="text-center text-muted mb-4">
                     Sign in to your Shiftplanner account

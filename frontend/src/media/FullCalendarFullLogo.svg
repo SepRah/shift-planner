@@ -1,0 +1,26 @@
+<svg width="320" height="80" viewBox="0 0 320 80" xmlns="http://www.w3.org/2000/svg">
+  <!-- Icon -->
+  <g transform="translate(0,4)">
+    <rect x="4" y="8" width="56" height="52" rx="8" fill="#2563EB"></rect>
+    <rect x="16" y="2" width="8" height="12" rx="4" fill="#2563EB"></rect>
+    <rect x="40" y="2" width="8" height="12" rx="4" fill="#2563EB"></rect>
+    <rect x="10" y="18" width="44" height="36" rx="4" fill="white"></rect>
+
+    <!-- Legende -->
+    <rect x="14" y="22" width="6" height="6" rx="1" fill="#22C55E"></rect>
+    <rect x="14" y="32" width="6" height="6" rx="1" fill="#F59E0B"></rect>
+    <rect x="14" y="42" width="6" height="6" rx="1" fill="#6366F1"></rect>
+
+    <!-- Schicht-Balken -->
+    <g fill="#2563EB">
+      <rect x="26" y="22" width="6" height="16" rx="3"></rect>
+      <rect x="36" y="22" width="6" height="22" rx="3"></rect>
+      <rect x="46" y="22" width="6" height="12" rx="3"></rect>
+    </g>
+  </g>
+
+  <!-- Text -->
+  <text x="80" y="52" font-size="32" font-family="Inter, Roboto, Arial, sans-serif" fill="#0F172A" font-weight="600">
+    ShiftPlanner
+  </text>
+</svg>
