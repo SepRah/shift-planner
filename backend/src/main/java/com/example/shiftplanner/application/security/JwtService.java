@@ -40,6 +40,7 @@ public class JwtService {
     ){
 
         Map<String, Object> claims = new HashMap<>();
+        // Add the roles and qualifications into the claims
         claims.put("roles", systemRoles.stream().map(Enum::name).toList());
         claims.put("staff", staffQualifications);
 
@@ -77,6 +78,11 @@ public class JwtService {
         }
     }
 
+    /**
+     * Extracts the system roles
+     * @param token The JWT token
+     * @return A Set of user roles
+     */
     @SuppressWarnings("unchecked")
     public Set<UserRole> extractSystemRoles(String token) {
         List<String> roles = extractAllClaims(token).get("roles", List.class);
@@ -86,6 +92,11 @@ public class JwtService {
                 .collect(Collectors.toSet());
     }
 
+    /**
+     * Extracts the user staff qualification
+     * @param token The JWT token
+     * @return Set of qualifications
+     */
     @SuppressWarnings("unchecked")
     public Set<String> extractStaffQualifications(String token) {
         List<String> staff = extractAllClaims(token).get("staff", List.class);
@@ -94,7 +105,7 @@ public class JwtService {
 
 
     /**
-     * Checks whether the token is expired.
+     * Checks whether the token is expired (not used now, maybe in the future)
      * @param token The jwt token
      * @return whether the token is expired
      */

@@ -22,12 +22,10 @@ import java.util.Set;
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
-    private final UserRepository userRepository;
     private final JwtService jwtService;
 
     @Autowired
-    public JwtAuthFilter(UserRepository userRepository, JwtService jwtService) {
-        this.userRepository = userRepository;
+    public JwtAuthFilter(JwtService jwtService) {
         this.jwtService = jwtService;
     }
 
