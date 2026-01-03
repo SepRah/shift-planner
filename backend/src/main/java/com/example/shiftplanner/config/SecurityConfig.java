@@ -73,7 +73,7 @@ public class SecurityConfig {
      */
     @Bean
     @Order(1)
-    @Profile("dev")
+    @Profile("h2")
     public SecurityFilterChain h2Chain(HttpSecurity http) throws Exception {
         http
                 .securityMatcher("/h2-console/**")
