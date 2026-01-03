@@ -1,5 +1,5 @@
 import Navbar from "../components/Navbar";
-import TaskAssignmentList from "../components/TaskAssignmentList";
+import MyTaskAssignmentsCalender from  "../components/MyTaskAssignmentsCalender.jsx"
 
 export default function HomePage() {
     return (
@@ -8,9 +8,6 @@ export default function HomePage() {
 
             <main style={{ padding: "1rem" }}>
                 <h1>Welcome to ShiftPlanner</h1>
-                <p>
-                    Manage staff members and assign tasks based on qualification levels.
-                </p>
             </main>
 
             <div style={{padding: "16px"}}>
@@ -27,7 +24,7 @@ export default function HomePage() {
                             Assigned Tasks
                         </h4>
 
-                        <TaskAssignmentList />
+                        <MyTaskAssignmentsCalender />
                     </div>
                 </div>
             </div>
