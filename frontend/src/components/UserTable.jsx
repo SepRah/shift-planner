@@ -6,7 +6,8 @@ export default function UsersTable({
                                        onEditRoles,
                                        canEditUserRoles,
                                        canEditStaffQualification,
-                                       onEditStaffQualification
+                                       onEditStaffQualification,
+                                       onEditFte
                                    }) {
     // Add sorting state
     const [sortConfig, setSortConfig] = useState({
@@ -66,6 +67,8 @@ export default function UsersTable({
                     Qualification {sortConfig.key === "staffQualificationLevel" ? (sortConfig.direction === "asc" ? "▲" : "▼") : ""}
                 </th>
 
+                <th>FTE</th>
+
                 {canEditUserRoles && (
                     <th onClick={() => requestSort("roles")} style={{ cursor: "pointer" }}>
                         User Roles
@@ -85,6 +88,7 @@ export default function UsersTable({
                     <td>{user.username}</td>
                     <td>{user.firstName} {user.lastName}</td>
                     <td>{user.staffQualificationLevel}</td>
+                    <td>{user.fte}</td>
                     {/* USER ROLES – ADMINS ONLY */}
                     {canEditUserRoles && (
                         <td>{user.roles.join(", ")}</td>
@@ -129,7 +133,7 @@ export default function UsersTable({
                                                 className="dropdown-item"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#fteModal"
-                                                // onClick={() => onEditFte(user}
+                                                onClick={() => onEditFte(user)}
                                             >
                                                 Change FTE
                                             </button>

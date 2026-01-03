@@ -11,6 +11,7 @@ public record AdminUserDTO(
         String firstName,
         String lastName,
         QualificationLevel staffQualificationLevel,
+        double fte,
         boolean active,
         Set<UserRole> roles
 ) {}

@@ -4,12 +4,13 @@ import {
     activateUser,
     deactivateUser,
     fetchAllUsers,
-    fetchAvailableRoles, fetchQualifications,
+    fetchAvailableRoles, fetchQualifications, updateFTE,
     updateStaffQualification,
     updateUserRoles
 } from "../api/adminApi.js";
 import {useAuth} from "../context/AuthContext.jsx";
 import RoleModal from "../components/RoleModal.jsx";
+import FTEModal from "../components/FTEModal.jsx";
 import {canManageStaffRoles, canManageUserRoles} from "../permissions/ManagementPermissions.js";
 
 
@@ -24,9 +25,8 @@ export default function ManagementPage() {
 
     const [selectedUser, setSelectedUser] = useState(null);
     const [selectedRoles, setSelectedRoles] = useState([]);
-
-    const [selectedStaffUser, setSelectedStaffUser] = useState(null);
     const [selectedQualification, setSelectedQualification] = useState([]);
+    const [selectedStaffFTE, setSelectedStaffFTE] = useState(null);
 
     /**
      * Loads all users for the admin dashboard.
@@ -105,15 +105,19 @@ export default function ManagementPage() {
                 }
                 canEditStaffQualification={canManageStaffRoles(currentUser)}
                 onEditStaffQualification={(user) => {
-                    setSelectedStaffUser(user);
+                    setSelectedUser(user);
                     setSelectedQualification(user.staffQualificationLevel);
+                }}
+                onEditFte={(user) => {
+                    setSelectedUser(user);
+                    setSelectedStaffFTE(user.fte)
                 }}
             />
 
             {/* Role Modal */}
             <RoleModal
                 modalId="staffRoleModal"
-                user={selectedStaffUser}
+                user={selectedUser}
                 title="Update staff qualification"
                 availableRoles={availableQualifications}
                 selectedRoles={selectedQualification}
@@ -121,7 +125,7 @@ export default function ManagementPage() {
                 onSelectRole={setSelectedQualification}
                 onSave={async () => {
                     await updateStaffQualification(
-                        selectedStaffUser.id,
+                        selectedUser,
                         selectedQualification
                     );
                     loadUsers();
@@ -138,6 +142,21 @@ export default function ManagementPage() {
                 onToggleRole={toggleRole}
                 onSave={saveRoles}
             />
+            <FTEModal
+                modalId="fteModal"
+                user={selectedUser}
+                title="Update user fte"
+                value={selectedStaffFTE}
+                onChange={setSelectedStaffFTE}
+                onSave={async () => {
+                    await updateFTE(
+                        selectedUser,
+                        selectedStaffFTE
+                    );
+                    loadUsers();
+                }}
+            />
+
         </>
     );
 }

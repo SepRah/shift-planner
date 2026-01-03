@@ -9,6 +9,7 @@ import api from "./axios.js";
  * @property {string} firstName
  * @property {string} lastName
  * @property {"NONE"|"JUNIOR"|"SENIOR"|"MANAGER"} staffQualificationLevel
+ * @property {number} fte
  * @property {string[]} roles
  * @property {boolean} active
  * Fetches the user list from the admin API and updates
@@ -65,21 +66,34 @@ export async function fetchQualifications() {
     return response.data;
 }
 
-
-export async function updateStaffQualification(staffID, roles){
-
+/**
+ * Updates the User staff qualification
+ * @param user The User object
+ * @param newQualification The new Qualification
+ * @return {Promise<any>}
+ */
+export async function updateStaffQualification(user, newQualification){
+    const response = await api.patch(`api/staffmembers/${user.id}`, {
+        firstName: null,
+        lastname: null,
+        staffQualificationLevel: newQualification,
+        fte: null
+    })
+    return response.data;
 }
 
 
 /**
  * Changes the FTE of the user
- * @param {number} staffId
- * @param {number} newFte
+ * @param user The User object
+ * @param {number} newFte The new FTE
  */
-// export async function changeFTE({ staffId, newFte }) {
-//     const response = await api.post("/api/users/change-fte", {
-//         id: staffId,
-//         fte: newFte
-//     });
-//     return response.data;
-// }
+export async function updateFTE( user, newFte ) {
+    const response = await api.patch(`api/staffmembers/${user.id}`, {
+        firstName: null,
+        lastname: null,
+        staffQualificationLevel: null,
+        fte: newFte
+    })
+    return response.data;
+}
