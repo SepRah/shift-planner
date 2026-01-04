@@ -1,7 +1,5 @@
 package com.example.shiftplanner.application.security;
 
-import com.example.shiftplanner.domain.security.User;
-import com.example.shiftplanner.infrastructure.UserRepository;
 import io.jsonwebtoken.io.IOException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
