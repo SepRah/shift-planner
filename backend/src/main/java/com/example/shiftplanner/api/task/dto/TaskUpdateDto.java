@@ -11,12 +11,18 @@ import lombok.*;
 @AllArgsConstructor
 
 /**
- * Data Transfer Object für das Updaten einer Aufgabe.
- * */
+ * Data Transfer Object (DTO) for updating an existing task via the API.
+ * <p>
+ * Used in PUT requests to {@link com.example.shiftplanner.api.task.TaskController}.
+ * @author Benjamin Traffelet
+ * @version 1.0
+ * @since 2025-12-20
+ */
 
 public class TaskUpdateDto {
     @NotBlank
     private String name;
     private String description;
     private QualificationLevel qualificationLevel;
+    private Boolean active;
 }

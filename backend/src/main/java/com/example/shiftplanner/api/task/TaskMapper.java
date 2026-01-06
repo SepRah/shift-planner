@@ -6,9 +6,19 @@ import com.example.shiftplanner.api.task.dto.TaskResponseDto;
 import com.example.shiftplanner.api.task.dto.TaskUpdateDto;
 
 /**
- * Mapper-Klasse für Task-Entity und DTOs.
- * Wandelt TaskCreateDto in Task-Entity um und
- * Task-Entity in TaskResponseDto.
+ * Mapper class for converting between Task entities and their DTO representations.
+ * <p>
+ * Responsibilities:
+ * <ul>
+ *   <li>Convert {@link com.example.shiftplanner.api.task.dto.TaskCreateDto} to {@link com.example.shiftplanner.domain.task.Task}</li>
+ *   <li>Convert {@link com.example.shiftplanner.domain.task.Task} to {@link com.example.shiftplanner.api.task.dto.TaskResponseDto}</li>
+ *   <li>Update {@link com.example.shiftplanner.domain.task.Task} from {@link com.example.shiftplanner.api.task.dto.TaskUpdateDto}</li>
+ * </ul>
+ * <p>
+ * Used by the TaskService and TaskController for API data exchange.
+ * @author Benjamin Traffelet
+ * @version 1.0
+ * @since 2025-12-20
  */
 
 public class TaskMapper {
@@ -39,13 +49,13 @@ public class TaskMapper {
     public static TaskResponseDto toDto(Task task) {
         if (task == null) return null;
 
-        TaskResponseDto dtoResponse = new TaskResponseDto();
-        dtoResponse.setId(task.getId());
-        dtoResponse.setName(task.getName());
-        dtoResponse.setDescription(task.getDescription());
-        dtoResponse.setQualificationLevel(task.getQualificationLevel());
-
-        return dtoResponse;
+    TaskResponseDto dtoResponse = new TaskResponseDto();
+    dtoResponse.setId(task.getId());
+    dtoResponse.setName(task.getName());
+    dtoResponse.setDescription(task.getDescription());
+    dtoResponse.setQualificationLevel(task.getQualificationLevel());
+    dtoResponse.setActive(task.isActive());
+    return dtoResponse;
     }
 
     /**
@@ -57,5 +67,6 @@ public class TaskMapper {
         if (dtoUpdate.getName() != null) task.setName(dtoUpdate.getName());
         if (dtoUpdate.getDescription() != null) task.setDescription(dtoUpdate.getDescription());
         if (dtoUpdate.getQualificationLevel() != null) task.setQualificationLevel(dtoUpdate.getQualificationLevel());
+        if (dtoUpdate.getActive() != null) task.setActive(dtoUpdate.getActive());
     }
 }

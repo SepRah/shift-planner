@@ -1,164 +1,279 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
+/**
+ * Generates a nice color for each staff member for calendar display.
+ * @param {number|string} staffId - Staff ID
+ * @param {number} index - Index in staff array
+ * @returns {string} Color code
+ */
+function getStaffColor(staffId, index) {
+  const palette = [
+    '#FFECB3', '#B3E5FC', '#C8E6C9', '#FFCDD2', '#D1C4E9', '#FFF9C4',
+    '#B2DFDB', '#F8BBD0', '#DCEDC8', '#FFE0B2', '#F0F4C3', '#B3E5FC'
+  ];
+  return palette[index % palette.length];
+}
 import StaffList from "../components/StaffList";
+import AssignmentOverviewPerStaff from "../components/AssignmentOverviewPerStaff";
+import AssignmentOverviewPerTask from "../components/AssignmentOverviewPerTask";
 import TaskList from "../components/TaskList";
+import { getTasks, createTask, updateTask, fetchAllTaskAssignments, updateTaskAssignment, getAllTasksInclInactive } from "../api/taskApi";
+import { getStaffMembers } from "../api/staffApi";
 import Calendar from "../components/Calendar";
+import Navbar from "../components/Navbar";
+import "../styles/PlannerPage.css";
 
+/**
+ * Main planner page: shows staff, tasks, calendar, and assignment overviews.
+ */
 export default function PlannerPage() {
   const [staff, setStaff] = useState([]);
   const [tasks, setTasks] = useState([]);
+  const [allTasksInclInactive, setAllTasksInclInactive] = useState([]);
   const [events, setEvents] = useState([]);
   const [selectedStaff, setSelectedStaff] = useState(null);
+  const [calendarView, setCalendarView] = useState("timeGridWeek");
+  const [calendarDates, setCalendarDates] = useState({ start: null, end: null });
 
-  // Load staff and tasks from API on mount
+  // Map staffId to color for calendar display
+  const staffColorMap = useMemo(() => {
+    const map = {};
+    staff.forEach((s, idx) => {
+      if (s && s.id != null) map[s.id] = getStaffColor(s.id, idx);
+    });
+    return map;
+  }, [staff]);
+
+  /**
+   * Loads staff, tasks, and assignments from API when page loads.
+   */
   useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    // Staff
-    fetch("http://localhost:8080/api/staffmembers", {
-      headers: {
-        Authorization: token ? `Bearer ${token}` : undefined,
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch staff members");
-        const contentType = res.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
-          throw new Error("Response is not JSON");
-        }
-        return res.json();
-      })
-      .then((data) => setStaff(data))
-      .catch((err) => {
-        console.error("Error loading staff members:", err);
-        setStaff([]);
-      });
-
-    // Tasks
-    fetch("http://localhost:8080/api/tasks", {
-      headers: {
-        Authorization: token ? `Bearer ${token}` : undefined,
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch tasks");
-        const contentType = res.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
-          throw new Error("Response is not JSON");
-        }
-        return res.json();
-      })
-      .then((data) => setTasks(data))
-      .catch((err) => {
-        console.error("Error loading tasks:", err);
-        setTasks([]);
-      });
-
-    // TaskAssignments für den Kalender laden
-    fetch("http://localhost:8080/api/task-assignments", {
-      headers: {
-        Authorization: token ? `Bearer ${token}` : undefined,
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
+    getStaffMembers()
+      .then(setStaff)
+      .catch(() => setStaff([]));
+    getTasks()
+      .then(setTasks)
+      .catch(() => setTasks([]));
+    getAllTasksInclInactive()
+      .then(setAllTasksInclInactive)
+      .catch(() => setAllTasksInclInactive([]));
+    fetchAllTaskAssignments()
       .then((assignments) => {
-        // Mappe Assignments zu FullCalendar-Events
         const mappedEvents = assignments.map((a) => ({
           id: a.id,
-          title: `${a.staffName ? a.staffName + ": " : ""}${a.taskName}`,
+          title: a.taskName || '',
           start: a.timeRange?.start,
           end: a.timeRange?.end,
           extendedProps: {
             assignmentId: a.id,
             staffId: a.staffId,
+            staffFirstName: a.staffFirstName,
+            staffLastName: a.staffLastName,
             taskId: a.taskId,
+            taskName: a.taskName,
+            taskDescription: a.taskDescription,
           },
         }));
         setEvents(mappedEvents);
       })
-      .catch((err) => {
-        console.error("Error loading assignments:", err);
-        setEvents([]);
-      });
+      .catch(() => setEvents([]));
   }, []);
 
-  // Funktion zum Hinzufügen eines neuen Tasks
-  const addTask = (taskData) => {
-    fetch("http://localhost:8080/api/tasks", {
-      method: "POST",
-      headers: {
-        Authorization: localStorage.getItem("token") ? `Bearer ${localStorage.getItem("token")}` : undefined,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(taskData),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to create task");
-        return res.json();
-      })
-      .then((newTask) => setTasks((prev) => [...prev, newTask]))
-      .catch((err) => {
-        console.error("Error creating task:", err);
-      });
+  /**
+   * Reloads all tasks (active and inactive) from API.
+   */
+  const reloadTasks = async () => {
+    try {
+      const allTasks = await getTasks();
+      setTasks(allTasks);
+      const allInclInactive = await getAllTasksInclInactive();
+      setAllTasksInclInactive(allInclInactive);
+    } catch {
+      setTasks([]);
+      setAllTasksInclInactive([]);
+    }
   };
 
-  // Optional: Funktion, um Task nach Zuordnung aus der Liste zu entfernen
-  const removeTask = (taskId) => {
-    setTasks((prev) => prev.filter((t) => t.id !== taskId));
+  /**
+   * Handler for when a new task is created.
+   */
+  const handleTaskCreated = async () => {
+    await reloadTasks();
   };
 
-  // Handler für Drag & Drop/Resize
-  const handleEventChange = (event) => {
-    fetch(`http://localhost:8080/api/task-assignments/${event.id}`, {
-      method: "PUT",
-      headers: {
-        Authorization: localStorage.getItem("token") ? `Bearer ${localStorage.getItem("token")}` : undefined,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+
+  /**
+   * Sets a task to inactive in the backend and reloads the task list.
+   * @param {Object} task - The task to deactivate
+   */
+  const deactivateTask = async (task) => {
+    if (!task || !task.id) return;
+    const payload = { ...task, active: false };
+    if (task.active === 0 || task.active === 1) {
+      payload.active = 0;
+    }
+    await updateTask(task.id, payload);
+    await reloadTasks();
+  };
+
+  /**
+   * Handler for drag & drop or resize of calendar events.
+   * Updates assignment in backend and reloads assignments and tasks.
+   * @param {Object} event - The calendar event
+   */
+  const handleEventChange = async (event) => {
+    const assignmentId = event.extendedProps.assignmentId || event.id;
+    if (!assignmentId) return;
+    try {
+      await updateTaskAssignment(assignmentId, {
         timeRange: {
           start: event.start?.toISOString(),
           end: event.end?.toISOString(),
         },
-      }),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to update assignment");
-        return res.json();
-      })
-      .then((updated) => {
-        // Optional: Events im State aktualisieren
-      })
-      .catch((err) => {
-        console.error("Error updating assignment:", err);
       });
+    } catch {
+      alert("Fehler beim Aktualisieren des TaskAssignments!");
+    }
+    
+    const assignments = await fetchAllTaskAssignments();
+    const mappedEvents = assignments.map((a) => ({
+      id: a.id,
+      title: a.taskName || '',
+      start: a.timeRange?.start,
+      end: a.timeRange?.end,
+      extendedProps: {
+        assignmentId: a.id,
+        staffId: a.staffId,
+        staffFirstName: a.staffFirstName,
+        staffLastName: a.staffLastName,
+        taskId: a.taskId,
+        taskName: a.taskName,
+        taskDescription: a.taskDescription,
+      },
+    }));
+    setEvents(mappedEvents);
+    const allInclInactive = await getAllTasksInclInactive();
+    setAllTasksInclInactive(allInclInactive);
+  };
+
+  // Handler für TaskAssignment nach Drag&Drop
+  /**
+   * Handler for assigning a task to staff (e.g. via drag & drop).
+   * Optionally deactivates the task after assignment.
+   */
+  const handleTaskAssigned = async (assignment, task, removeAfterAssign) => {
+    if (removeAfterAssign && task) {
+      
+      const assignments = await fetchAllTaskAssignments();
+      const assignedStaff = assignments.filter(a => a.taskId === task.id);
+      
+      const qualOrder = ["NONE", "JUNIOR", "SENIOR", "MANAGER"];
+      const requiredIdx = qualOrder.indexOf(task.qualificationLevel);
+      
+      let qualified = false;
+      for (const a of assignedStaff) {
+        const staffObj = staff.find(s => s.id === a.staffId);
+        if (staffObj) {
+          const staffIdx = qualOrder.indexOf(staffObj.staffQualificationLevel);
+          if (staffIdx >= requiredIdx) {
+            qualified = true;
+            break;
+          }
+        }
+      }
+      if (!qualified) {
+        window.alert("Task kann nicht entfernt werden: Kein zugeordneter Mitarbeiter hat die erforderliche oder höhere Qualifikation.");
+      } else {
+        await deactivateTask(task);
+      }
+    }
+    
+    const assignments = await fetchAllTaskAssignments();
+    const mappedEvents = assignments.map((a) => ({
+      id: a.id,
+      title: a.taskName || '',
+      start: a.timeRange?.start,
+      end: a.timeRange?.end,
+      extendedProps: {
+        assignmentId: a.id,
+        staffId: a.staffId,
+        staffFirstName: a.staffFirstName,
+        staffLastName: a.staffLastName,
+        taskId: a.taskId,
+        taskName: a.taskName,
+        taskDescription: a.taskDescription,
+      },
+    }));
+    setEvents(mappedEvents);
+    const allInclInactive = await getAllTasksInclInactive();
+    setAllTasksInclInactive(allInclInactive);
   };
 
   return (
-    <div className="app">
-      <div className="sidebar">
-        <StaffList
-          staff={staff}
-          onSelect={setSelectedStaff}
-          selected={selectedStaff}
-        />
-        <TaskList
-          tasks={tasks}
-          selectedStaff={selectedStaff}
-          onAddTask={addTask}
-          onRemoveTask={removeTask} // optional, je nach Verhalten
-        />
-        {/* AddTaskForm kann in TaskList integriert werden */}
-      </div>
-      <div className="calendar-wrap">
-        <Calendar
-          events={events}
-          onEventDrop={handleEventChange}
-          onEventResize={handleEventChange}
-        />
-      </div>
-    </div>
+    <>
+      <Navbar />
+      <main className="planner-main">
+        <div className="planner-content">
+          <aside className="planner-sidebar">
+            <StaffList
+              staff={staff}
+              onSelect={setSelectedStaff}
+              selected={selectedStaff}
+            />
+            <TaskList
+              tasks={tasks}
+              selectedStaff={selectedStaff}
+              onUpdateTask={handleTaskCreated}
+            />
+          </aside>
+          <section className="planner-calendar-wrap">
+            <div className="calendar-view-controls" style={{ marginBottom: 12, display: 'flex', gap: 8 }}>
+              <button onClick={() => setCalendarView("timeGridDay")} className={calendarView === "timeGridDay" ? "active" : ""}>Tag</button>
+              <button onClick={() => setCalendarView("timeGridWeek")} className={calendarView === "timeGridWeek" ? "active" : ""}>Woche</button>
+              <button onClick={() => setCalendarView("dayGridMonth")} className={calendarView === "dayGridMonth" ? "active" : ""}>Monat</button>
+            </div>
+            <Calendar
+              events={events}
+              onEventDrop={handleEventChange}
+              onEventResize={handleEventChange}
+              tasks={tasks}
+              selectedStaff={selectedStaff}
+              onTaskAssigned={handleTaskAssigned}
+              staffColorMap={staffColorMap}
+              calendarView={calendarView}
+              onViewDatesChange={setCalendarDates}
+            />
+            
+            <div style={{ display: 'flex', gap: 32 }}>
+              <div style={{ display: 'flex', gap: 32, width: '100%' }}>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ background: '#fff', borderRadius: 8, boxShadow: '0 2px 8px rgba(25,118,210,0.07)', padding: 16, marginBottom: 8 }}>
+                    <AssignmentOverviewPerTask
+                      key={`${calendarDates.start ? calendarDates.start.toISOString() : ""}${calendarDates.end ? calendarDates.end.toISOString() : ""}`}
+                      events={events}
+                      tasks={allTasksInclInactive}
+                      staff={staff}
+                      calendarDates={calendarDates}
+                    />
+                  </div>
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ background: '#fff', borderRadius: 8, boxShadow: '0 2px 8px rgba(25,118,210,0.07)', padding: 16, marginBottom: 8 }}>
+                    <AssignmentOverviewPerStaff
+                      key={'staff-' + (calendarDates.start ? calendarDates.start.toISOString() : 'null') + (calendarDates.end ? calendarDates.end.toISOString() : 'null')}
+                      events={events}
+                      tasks={allTasksInclInactive}
+                      staff={staff}
+                      calendarDates={calendarDates}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </section>
+        </div>
+      </main>
+    </>
   );
 }
+

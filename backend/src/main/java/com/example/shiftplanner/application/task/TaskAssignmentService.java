@@ -44,18 +44,6 @@ public class TaskAssignmentService {
         StaffMember staff = staffMemberRepository.findById(dto.getStaffId())
                 .orElseThrow(StaffMemberNotFoundException::new);
 
-        // Prüfe, ob bereits ein Assignment für Task, Staff und Zeit existiert
-        boolean exists = assignmentRepository
-            .findByTask_IdAndAssignedStaff_IdAndTimeRange_StartAndTimeRange_End(
-                dto.getTaskId(),
-                dto.getStaffId(),
-                dto.getTimeRange().getStart(),
-                dto.getTimeRange().getEnd()
-            ).stream().findAny().isPresent();
-
-        if (exists) {
-            throw new IllegalStateException("Assignment already exists for this staff, task and time!");
-        }
 
         TaskAssignment assignment = new TaskAssignment();
         assignment.setTask(task);

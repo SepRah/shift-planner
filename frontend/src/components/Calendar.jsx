@@ -1,18 +1,17 @@
+
 import React, { useRef, useEffect } from "react";
+import { createTaskAssignment } from "../api/taskApi";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin, { Draggable } from "@fullcalendar/interaction";
 
-// Hilfsfunktion, um Task-Infos anhand der ID zu finden
-function getTaskById(tasks, id) {
-  return tasks && id ? tasks.find((t) => String(t.id) === String(id)) : undefined;
-}
-
-export default function CalendarComponent({ events, onEventDrop, onEventResize, tasks, selectedStaff, onTaskAssigned }) {
+/**
+ * CalendarComponent displays the main calendar and handles drag-and-drop task assignment.
+ */
+export default function CalendarComponent({ events, onEventDrop, onEventResize, tasks, selectedStaff, onTaskAssigned, staffColorMap, calendarView, onViewDatesChange }) {
   const calendarRef = useRef(null);
 
-  // Tasks draggable machen, wenn das Tasks-Element existiert
   useEffect(() => {
     const taskListEl = document.querySelector(".task-draggable-list");
     if (taskListEl) {
@@ -32,56 +31,91 @@ export default function CalendarComponent({ events, onEventDrop, onEventResize, 
     }
   }, [tasks, selectedStaff]);
 
-  // Custom rendering for event content (shows staffName and taskName)
+  // Render event content with staff and task name
   function renderEventContent(eventInfo) {
-    // staffName aus extendedProps oder aus events-Array holen
-    let staffName = eventInfo.event.extendedProps.staffName;
-    // Fallback: staffName aus events-Array suchen, falls nicht gesetzt
-    if (!staffName && events && eventInfo.event.id) {
-      const found = events.find(ev => String(ev.id) === String(eventInfo.event.id));
-      if (found && found.extendedProps && found.extendedProps.staffName) {
-        staffName = found.extendedProps.staffName;
-      }
+    let staffFirstName = eventInfo.event.extendedProps.staffFirstName;
+    let staffLastName = eventInfo.event.extendedProps.staffLastName;
+    let staffName = "";
+    if (staffFirstName || staffLastName) {
+      staffName = (staffFirstName && staffLastName) ? `${staffFirstName} ${staffLastName}` : (staffFirstName || staffLastName);
+    } else if (eventInfo.event.extendedProps.staffName) {
+      staffName = eventInfo.event.extendedProps.staffName;
     }
     const task = getTaskById(tasks, eventInfo.event.extendedProps.taskId);
+    const taskName = task ? task.name : eventInfo.event.title;
+    const staffId = eventInfo.event.extendedProps.staffId;
+    const bgColor = staffColorMap && staffId ? staffColorMap[staffId] : '#e3f7ef';
     return (
-      <div>
+      <div style={{ background: bgColor, borderRadius: 6, padding: '2px 4px', color: '#2e363f' }}>
         <b>
           {staffName ? staffName + ": " : ""}
-          {task ? task.name : eventInfo.event.title}
+          {taskName}
         </b>
       </div>
     );
   }
 
-  // Show description on event click
+  // Show event details on click
   function handleEventClick(info) {
     const { extendedProps } = info.event;
+    let staffFirstName = extendedProps.staffFirstName;
+    let staffLastName = extendedProps.staffLastName;
+    let staffName = (staffFirstName && staffLastName) ? `${staffFirstName} ${staffLastName}` : (staffFirstName || staffLastName || "");
+    let taskName = extendedProps.taskName;
+    let taskDescription = extendedProps.taskDescription;
+
     const task = getTaskById(tasks, extendedProps.taskId);
+    taskName = task ? task.name : taskName;
+    taskDescription = task ? task.description : taskDescription;
     let msg = "";
-    if (extendedProps.staffName) msg += `Mitarbeiter: ${extendedProps.staffName}\n`;
-    msg += `Task: ${task ? task.name : info.event.title}`;
-    if (task && task.description) msg += `\nBeschreibung: ${task.description}`;
+    if (staffName) msg += `Staff: ${staffName}\n`;
+    msg += `Task: ${taskName || info.event.title}`;
+    if (taskDescription) msg += `\nDescription: ${taskDescription}`;
     alert(msg);
   }
+
+  // Find a task by ID
+  function getTaskById(tasks, id) {
+    return tasks && id ? tasks.find((t) => String(t.id) === String(id)) : undefined;
+  }
+
+  // Switch calendar view and notify parent on view change
+  useEffect(() => {
+    if (calendarRef.current && calendarView) {
+      setTimeout(() => {
+        const api = calendarRef.current.getApi?.();
+        if (api) {
+          if (api.view?.type !== calendarView) {
+            api.changeView(calendarView);
+          }
+          if (onViewDatesChange && api.view) {
+            onViewDatesChange({ start: api.view.activeStart, end: api.view.activeEnd });
+          }
+        }
+      }, 0);
+    }
+  }, [calendarView, onViewDatesChange]);
 
   return (
     <div style={{ flex: 1 }}>
       <FullCalendar
         ref={calendarRef}
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-        initialView="timeGridWeek"
+        initialView={calendarView || "timeGridWeek"}
         editable={true}
         droppable={true}
         events={events}
         eventDrop={(info) => onEventDrop && onEventDrop(info.event)}
         eventResize={(info) => onEventResize && onEventResize(info.event)}
-        eventAdd={null}
+        datesSet={(info) => {
+          if (onViewDatesChange) {
+            onViewDatesChange({ start: info.start, end: info.end });
+          }
+        }}
         eventReceive={async (info) => {
-          // Remove event immediately to prevent double POST
           info.event.remove();
 
-          const { taskId, staffId } = info.event.extendedProps;
+          const { taskId, staffId, staffName } = info.event.extendedProps;
 
           // Set default end time if not set (+1 hour)
           let start = info.event.start;
@@ -91,26 +125,27 @@ export default function CalendarComponent({ events, onEventDrop, onEventResize, 
           }
 
           if (taskId && staffId) {
-            const res = await fetch("http://localhost:8080/api/task-assignments", {
-              method: "POST",
-              headers: {
-                Authorization: localStorage.getItem("token") ? `Bearer ${localStorage.getItem("token")}` : undefined,
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
+            if (window.__assignmentInProgress) return;
+            window.__assignmentInProgress = true;
+            try {
+              const assignment = await createTaskAssignment({
                 taskId: Number(taskId),
                 staffId: Number(staffId),
                 timeRange: {
                   start: start?.toISOString(),
                   end: end?.toISOString(),
                 }
-              }),
-            });
-            if (res.ok) {
-              const assignment = await res.json();
-              if (onTaskAssigned) onTaskAssigned(assignment);
-            } else {
+              });
+              if (assignment && staffName && !assignment.staffName) {
+                assignment.staffName = staffName;
+              }
+              const task = tasks && Array.isArray(tasks) ? tasks.find(t => String(t.id) === String(taskId)) : undefined;
+              const removeAfterAssign = localStorage.getItem("removeAfterAssign") === "true";
+              if (onTaskAssigned) await onTaskAssigned(assignment, task, removeAfterAssign);
+            } catch (err) {
               alert("TaskAssignment konnte nicht erstellt werden!");
+            } finally {
+              window.__assignmentInProgress = false;
             }
           } else {
             alert("Bitte zuerst einen Mitarbeiter auswählen und dann Task ziehen!");
@@ -119,7 +154,8 @@ export default function CalendarComponent({ events, onEventDrop, onEventResize, 
         eventContent={renderEventContent}
         eventClick={handleEventClick}
         selectable={true}
-        eventResizableFromStart={true}
+  eventResizableFromStart={true}
+  allDaySlot={false}
       />
     </div>
   );

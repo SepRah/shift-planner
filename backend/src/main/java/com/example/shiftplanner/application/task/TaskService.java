@@ -14,6 +14,12 @@ import java.util.stream.Collectors;
 
 @Service
 public class TaskService {
+    public List<TaskResponseDto> getAllTasksInclInactive() {
+        List<Task> tasks = taskRepository.findAll();
+        return tasks.stream()
+                .map(TaskMapper::toDto)
+                .collect(Collectors.toList());
+    }
 
     private final TaskRepository taskRepository;
 
@@ -42,14 +48,14 @@ public class TaskService {
     }
 
     public void delete(Long id) {
-        if (!taskRepository.existsById(id)) {
-            throw new TaskNotFoundException();
-        }
-        taskRepository.deleteById(id);
+        Task task = taskRepository.findById(id)
+                .orElseThrow(TaskNotFoundException::new);
+        task.setActive(false);
+        taskRepository.save(task);
     }
 
     public List<TaskResponseDto> getAll() {
-        List<Task> tasks = taskRepository.findAll();
+        List<Task> tasks = taskRepository.findByActiveTrue();
         return tasks.stream()
                 .map(TaskMapper::toDto)
                 .collect(Collectors.toList());

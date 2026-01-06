@@ -1,9 +1,33 @@
+
 package com.example.shiftplanner.domain.task;
 
 import com.example.shiftplanner.domain.staff.StaffMember;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.Instant;
+
+/**
+ * Domain entity representing the assignment of a task to a staff member.
+ * <p>
+ * A TaskAssignment has:
+ * <ul>
+ *   <li>an auto-generated database ID,</li>
+ *   <li>a reference to a {@link Task},</li>
+ *   <li>a reference to an assigned {@link com.example.shiftplanner.domain.staff.StaffMember},</li>
+ *   <li>a {@link TimeRange} for the scheduled period,</li>
+ *   <li>a completion status,</li>
+ *   <li>timestamps for creation and update.</li>
+ * </ul>
+ * <p>
+ * Business rules:
+ * <ul>
+ *   <li>Staff members can be assigned to different tasks.</li>
+ *   <li>TimeRange must be valid (start before end).</li>
+ * </ul>
+ * @author Benjamin Traffelet
+ * @version 1.0
+ * @since 2025-12-20
+ */
 
 @Getter
 @Setter

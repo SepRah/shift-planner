@@ -9,9 +9,33 @@ import jakarta.validation.Valid;
 
 import java.util.List;
 
+/**
+ * REST controller for managing tasks.
+ * <p>
+ * Exposes endpoints for creating, updating, retrieving, and deleting tasks.
+ * Delegates business logic to {@link com.example.shiftplanner.application.task.TaskService}.
+ * <p>
+ * API endpoints:
+ * <ul>
+ *   <li>GET /api/tasks - List all active tasks</li>
+ *   <li>GET /api/tasks/all - List all tasks including inactive</li>
+ *   <li>GET /api/tasks/{id} - Get task by ID</li>
+ *   <li>POST /api/tasks - Create new task</li>
+ *   <li>PUT /api/tasks/{id} - Update task</li>
+ *   <li>DELETE /api/tasks/{id} - Delete task</li>
+ * </ul>
+ * @author Bejamin Traffelet
+ * @version 1.0
+ * @since 2025-12-20
+ */
+
 @RestController
 @RequestMapping("/api/tasks")
 public class TaskController {
+    @GetMapping("/all")
+    public List<TaskResponseDto> getAllInclInactive() {
+        return taskService.getAllTasksInclInactive();
+    }
 
     private final TaskService taskService;
 
