@@ -38,7 +38,7 @@ public class User implements UserDetails {
     @Getter
     @Setter
     private boolean active = true;
-
+    // For the future(?)
     boolean emailVerified = false;
 
     @Column(nullable = false, updatable = false)
@@ -58,7 +58,14 @@ public class User implements UserDetails {
         this.roles = roles;
     }
 
-    // Factory
+    /**
+     * Factory for the User class
+     * @param username The unique username
+     * @param password The password
+     * @param roles A set of roles
+     * @param staffmember The staffmember object
+     * @return A new user
+     */
     public static User create(String username, String password, Set<UserRole> roles, StaffMember staffmember) {
         User user = new User();
         user.username = username;
@@ -68,6 +75,9 @@ public class User implements UserDetails {
         return user;
     }
 
+    /**
+     * Tracks the time of creation of the User entity
+     */
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
@@ -75,6 +85,10 @@ public class User implements UserDetails {
     // ================================
     // SPRING SECURITY METHODS
     // ================================
+    /**
+     * Gets the current authorities
+     * @return A list of all current user authorities
+     */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()
@@ -82,6 +96,10 @@ public class User implements UserDetails {
                 .toList();
     }
 
+    /**
+     * Function that gets overriden from User details
+     * @return The password hash
+     */
     @Override
     public String getPassword() {
         return passwordHash;
