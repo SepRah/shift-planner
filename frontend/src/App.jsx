@@ -8,7 +8,6 @@ import UserDashboard from "./pages/UserDashboard.jsx";
 import UnauthorizedPage from "./pages/UnauthorizedPage.jsx";
 import ProtectedRoute from "./routes/ProtectedRoute.jsx";
 import ManagementLayout from "./routes/ManagementLayout.jsx";
-import ManagementPage from "./pages/UsersManagementPage.jsx";
 import UsersManagementPage from "./pages/UsersManagementPage.jsx";
 import TaskManagementPage from "./pages/TaskManagementPage.jsx";
 
