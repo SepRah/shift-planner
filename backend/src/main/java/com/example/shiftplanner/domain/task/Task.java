@@ -58,6 +58,9 @@ public class Task {
     @Column(nullable = false)
     private boolean active = true;
 
+    @Column(nullable = false)
+    private boolean defaultTask = false;
+
     @PrePersist
     protected void onCreate() {
         createdAt = Instant.now();

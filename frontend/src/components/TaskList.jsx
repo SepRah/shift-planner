@@ -7,7 +7,18 @@ import { createTask, getQualificationLevels } from "../api/taskApi";
  * TaskList component displays a scrollable list of tasks and a form to add new tasks.
  * Allows assignment of staff to tasks and removal of tasks.
  */
-export default function TaskList({ tasks, selectedStaff, onUpdateTask, onRemoveTask }) {
+export default function TaskList({
+  tasks,
+  selectedStaff,
+  onUpdateTask,
+  onRemoveTask,
+  onAddTask,
+  onToggleActive,
+  showActiveToggle = false,
+  showRemoveAfterAssign = true,
+  showOnlyActive = true,
+  hideAddForm = false
+}) {
   const taskListStyle = {
     maxHeight: '340px',
     overflowY: 'auto',
@@ -41,18 +52,24 @@ export default function TaskList({ tasks, selectedStaff, onUpdateTask, onRemoveT
     });
   }, []);
 
-  // Add a new task
+  // Add a new task (calls onAddTask if provided, else falls back to legacy logic)
   const handleAddTask = async (e) => {
     e.preventDefault();
     if (!newTaskName.trim() || !newTaskQualification) return;
+    const newTaskData = {
+      name: newTaskName,
+      description: newTaskDescription,
+      qualificationLevel: newTaskQualification,
+      ...(typeof defaultTask === 'boolean' ? { defaultTask } : {}),
+    };
     try {
-      await createTask({
-        name: newTaskName,
-        description: newTaskDescription,
-        qualificationLevel: newTaskQualification,
-      });
-      if (onUpdateTask) {
-        onUpdateTask();
+      if (onAddTask) {
+        await onAddTask(newTaskData);
+      } else {
+        await createTask(newTaskData);
+        if (onUpdateTask) {
+          onUpdateTask();
+        }
       }
       setNewTaskName("");
       setNewTaskDescription("");
@@ -93,7 +110,7 @@ export default function TaskList({ tasks, selectedStaff, onUpdateTask, onRemoveT
       <div className="task-list" style={taskListStyle}>
         <h3>Tasks</h3>
         <ul className="task-draggable-list">
-          {tasks.filter((task) => task.active !== false).map((task, idx) => {
+          {(showOnlyActive ? tasks.filter((task) => task.active !== false) : tasks).map((task, idx) => {
             const staffObj = taskStaffMap[task.id];
             const staffId = staffObj && staffObj.id ? staffObj.id : "";
             const staffDisplayName = staffObj && staffObj.name ? staffObj.name : "";
@@ -107,12 +124,23 @@ export default function TaskList({ tasks, selectedStaff, onUpdateTask, onRemoveT
                 data-staff-name={staffDisplayName}
                 draggable={true}
                 onClick={() => handleTaskClick(task)}
-                style={{ padding: 0 }}
+                style={{ padding: 0, opacity: task.active ? 1 : 0.5, background: task.active ? undefined : '#f7f3e9' }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 12px 0 12px' }}>
                   <strong>{task.name}</strong>
                   {task.qualificationLevel && (
                     <span className="task-qual" style={{ color: '#5a8d6dff' }}>{task.qualificationLevel}</span>
+                  )}
+                  {typeof task.active !== 'undefined' && showActiveToggle && (
+                    <label style={{ marginLeft: 10, fontSize: '0.95em', display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <input
+                        type="checkbox"
+                        checked={!!task.active}
+                        onChange={e => onToggleActive && onToggleActive(task)}
+                        style={{ marginRight: 2 }}
+                      />
+                      <span style={{ color: task.active ? '#388e3c' : '#b0bec5' }}>{task.active ? 'active' : 'inactive'}</span>
+                    </label>
                   )}
                 </div>
                 <hr style={{ margin: '6px 0 6px 0', border: 0, borderTop: '1px solid #e3e8ee' }} />
@@ -133,7 +161,7 @@ export default function TaskList({ tasks, selectedStaff, onUpdateTask, onRemoveT
         </ul>
       </div>
 
-      {qualificationLevels.length > 0 && (
+      {qualificationLevels.length > 0 && !hideAddForm && (
         <form onSubmit={handleAddTask} className="add-task-form add-task-form-block" style={{ marginTop: 12 }}>
           <label className="add-task-label" htmlFor="add-task-title">Add task</label>
           <input
@@ -171,26 +199,28 @@ export default function TaskList({ tasks, selectedStaff, onUpdateTask, onRemoveT
                 </option>
               ))}
             </select>
-            <button type="submit" className="add-task-btn" style={{ height: '36px', minHeight: 0, fontSize: '0.93em', padding: '0 14px', whiteSpace: 'nowrap' }}>Add task</button>
+            <button type="submit" className="add-task-btn" style={{ height: '36px', background: '#212529', minHeight: 0, fontSize: '0.93em', padding: '0 14px', whiteSpace: 'nowrap' }}>Add task</button>
           </div>
         </form>
       )}
-      <div style={{ marginTop: "10px" }}>
-        <input
-          type="checkbox"
-          id="remove-after-assign"
-          checked={removeAfterAssign}
-          onChange={() => {
-            setRemoveAfterAssign((prev) => {
-              localStorage.setItem("removeAfterAssign", !prev);
-              return !prev;
-            });
-          }}
-        />
-        <label htmlFor="remove-after-assign" style={{ marginLeft: "6px" }}>
-          Remove task after assignment
-        </label>
-      </div>
+      {showRemoveAfterAssign && (
+        <div style={{ marginTop: "10px" }}>
+          <input
+            type="checkbox"
+            id="remove-after-assign"
+            checked={removeAfterAssign}
+            onChange={() => {
+              setRemoveAfterAssign((prev) => {
+                localStorage.setItem("removeAfterAssign", !prev);
+                return !prev;
+              });
+            }}
+          />
+          <label htmlFor="remove-after-assign" style={{ marginLeft: "6px" }}>
+            Remove task after assignment
+          </label>
+        </div>
+      )}
     </>
   );
 }

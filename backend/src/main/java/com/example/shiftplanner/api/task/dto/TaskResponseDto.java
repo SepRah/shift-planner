@@ -25,4 +25,5 @@ public class TaskResponseDto {
     private String description;
     private QualificationLevel qualificationLevel;
     private Boolean active;
+    private Boolean defaultTask;
 }

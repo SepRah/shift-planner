@@ -219,6 +219,19 @@ export default function PlannerPage() {
               onSelect={setSelectedStaff}
               selected={selectedStaff}
             />
+            <button
+              style={{ marginBottom: 12, padding: '8px 16px', background: '#212529', color: 'white', border: 'none', borderRadius: 4, cursor: 'pointer', fontWeight: 500 }}
+              onClick={async () => {
+
+                const toActivate = allTasksInclInactive.filter(t => t.defaultTask && !t.active);
+                await Promise.all(toActivate.map(t => updateTask(t.id, { active: true })));
+
+                getTasks().then(setTasks);
+                getAllTasksInclInactive().then(setAllTasksInclInactive);
+              }}
+            >
+              Activate Default Tasks
+            </button>
             <TaskList
               tasks={tasks}
               selectedStaff={selectedStaff}
