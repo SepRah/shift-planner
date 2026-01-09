@@ -62,7 +62,5 @@ public class AuthenticationService {
         );
 
         return new AuthTokenDTO(token, username, systemRoles);
-
     }
-
 }
