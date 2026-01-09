@@ -246,6 +246,7 @@ public class UserService {
 
     /**
      * Returns all users for the admin dashboard.
+     * @return List of all users
      */
     @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public List<AdminUserDTO> getAllUsers() {
