@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 /**
  * Utility class for accessing security-related information
  * from the Spring Security context.
- *
  * Centralizes logic for resolving the currently authenticated user.
  */
 public class SecurityUtils {
@@ -24,7 +23,6 @@ public class SecurityUtils {
 
     /**
      * Returns the currently authenticated user.
-     *
      * Uses Spring Security's SecurityContext to obtain the Authentication
      * object, extracts the username, and loads the User entity from the database.
      *
