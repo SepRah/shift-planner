@@ -67,6 +67,10 @@ public class SecurityConfig {
     }
 
     // --- Security filter chains ---
+
+    /**
+     * Filterchain for the h2 db
+     */
     @Bean
     @Order(1)
     @Profile("dev")
@@ -80,6 +84,9 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /**
+     * Filterchain for the swagger UI
+     */
     @Bean
     @Order(2)
     @Profile("dev")
@@ -96,7 +103,9 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // Public Authentication Endpoints
+    /**
+     * Filterchain fo public authentication endpoints
+     */
     @Bean
     @Order(3)
     public SecurityFilterChain authChain(HttpSecurity http) throws Exception {
@@ -111,7 +120,9 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // JWT + Role-secured API
+    /**
+     * Filterchain JWT + Role-secured API
+     */
     @Bean
     @Order(4)
     public SecurityFilterChain apiChain(HttpSecurity http,

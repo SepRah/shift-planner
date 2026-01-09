@@ -31,6 +31,19 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         this.unauthorizedHandler = unauthorizedHandler;
     }
 
+    /**
+     * Performs filtering logic for each HTTP request processed by the application.
+     * <p>
+     * This method is invoked once per request within a single request thread and
+     * allows pre-processing and/or post-processing of the request and response
+     * before delegating to the next filter in the chain.
+     *
+     * @param request      the current HTTP request
+     * @param response     the current HTTP response
+     * @param filterChain  the filter chain to pass control to the next filter
+     * @throws ServletException if an error occurs during request processing
+     * @throws IOException      if an I/O error occurs during request or response handling
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -66,7 +79,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     response,
                     new org.springframework.security.authentication.InsufficientAuthenticationException("JWT expired or invalid", e)
             );
-            return; // IMPORTANT: stop the chain
+            // stop the chain
+            return;
         }
 
         // Only authenticate if not already authenticated
