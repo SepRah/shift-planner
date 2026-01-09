@@ -3,6 +3,7 @@ package com.example.shiftplanner.application.security;
 import com.example.shiftplanner.api.security.dto.*;
 import com.example.shiftplanner.domain.security.UserRole;
 
+import com.example.shiftplanner.domain.staff.QualificationLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,8 +23,6 @@ public class AuthenticationService {
 
     /**
      * Authenticates a user and returns a JWT.
-     * @param dto The user login request
-     * @return The authentification token
      */
     public AuthTokenDTO login(UserLoginRequestDTO dto) {
 
@@ -48,11 +47,13 @@ public class AuthenticationService {
 
 
         // Staff qualifications (STAFF_*)
-        Set<String> staffQualifications = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .filter(a -> a.startsWith("STAFF_"))
-                .map(a -> a.replace("STAFF_", ""))
-                .collect(Collectors.toSet());
+        Set<QualificationLevel> staffQualifications =
+                authentication.getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .filter(a -> a.startsWith("STAFF_"))
+                        .map(a -> a.replace("STAFF_", ""))
+                        .map(QualificationLevel::valueOf)
+                        .collect(Collectors.toSet());
 
         String token = jwtService.generateToken(
                 username,

@@ -1,6 +1,7 @@
 package com.example.shiftplanner.application.security;
 
 import com.example.shiftplanner.domain.security.UserRole;
+import com.example.shiftplanner.domain.staff.QualificationLevel;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -35,13 +36,18 @@ public class JwtService {
     public String generateToken(
             String username,
             Set<UserRole> systemRoles,
-            Set<String> staffQualifications
+            Set<QualificationLevel> staffQualifications
     ){
 
         Map<String, Object> claims = new HashMap<>();
         // Add the roles and qualifications into the claims
         claims.put("roles", systemRoles.stream().map(Enum::name).toList());
-        claims.put("staff", staffQualifications);
+        claims.put(
+                "staff",
+                staffQualifications.stream()
+                        .map(QualificationLevel::name)
+                        .toList()
+        );
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -97,11 +103,14 @@ public class JwtService {
      * @return Set of qualifications
      */
     @SuppressWarnings("unchecked")
-    public Set<String> extractStaffQualifications(String token) {
+    public Set<QualificationLevel> extractStaffQualifications(String token) {
         List<String> staff = extractAllClaims(token).get("staff", List.class);
-        return staff == null ? Set.of() : Set.copyOf(staff);
-    }
+        if (staff == null) return Set.of();
 
+        return staff.stream()
+                .map(QualificationLevel::valueOf)
+                .collect(Collectors.toSet());
+    }
 
     /**
      * Checks whether the token is expired (not used now, maybe in the future)

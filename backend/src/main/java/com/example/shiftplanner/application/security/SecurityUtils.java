@@ -32,6 +32,7 @@ public class SecurityUtils {
      *  - no authentication exists
      *  - the user is not authenticated
      *  - the user cannot be found in the database
+     * @return the user
      */
     public User getCurrentUser() {
         Authentication auth = SecurityContextHolder
