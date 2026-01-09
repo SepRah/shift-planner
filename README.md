@@ -13,6 +13,7 @@ The application enforces business rules such as qualification requirements and e
 ### Employees
 Each employee has:
 - A personal login
+- A user rights level
 - A qualification level
 - A full-time equivalent value (FTE)
 
