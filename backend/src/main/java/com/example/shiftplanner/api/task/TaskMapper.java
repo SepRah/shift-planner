@@ -30,14 +30,15 @@ public class TaskMapper {
      */
 
     public static Task toEntity(TaskCreateDto dtoCreate) {
-        if (dtoCreate == null) return null;
+    if (dtoCreate == null) return null;
 
-        Task task = new Task();
-        task.setName(dtoCreate.getName());
-        task.setDescription(dtoCreate.getDescription());
-        task.setQualificationLevel(dtoCreate.getQualificationLevel());
-
-        return task;
+    Task task = new Task();
+    task.setName(dtoCreate.getName());
+    task.setDescription(dtoCreate.getDescription());
+    task.setQualificationLevel(dtoCreate.getQualificationLevel());
+    task.setDefaultTask(dtoCreate.getDefaultTask() != null ? dtoCreate.getDefaultTask() : false);
+    task.setActive(dtoCreate.getActive() != null ? dtoCreate.getActive() : true);
+    return task;
     }
 
     /**
@@ -55,6 +56,7 @@ public class TaskMapper {
     dtoResponse.setDescription(task.getDescription());
     dtoResponse.setQualificationLevel(task.getQualificationLevel());
     dtoResponse.setActive(task.isActive());
+    dtoResponse.setDefaultTask(task.isDefaultTask());
     return dtoResponse;
     }
 
@@ -68,5 +70,6 @@ public class TaskMapper {
         if (dtoUpdate.getDescription() != null) task.setDescription(dtoUpdate.getDescription());
         if (dtoUpdate.getQualificationLevel() != null) task.setQualificationLevel(dtoUpdate.getQualificationLevel());
         if (dtoUpdate.getActive() != null) task.setActive(dtoUpdate.getActive());
+        if (dtoUpdate.getDefaultTask() != null) task.setDefaultTask(dtoUpdate.getDefaultTask());
     }
 }

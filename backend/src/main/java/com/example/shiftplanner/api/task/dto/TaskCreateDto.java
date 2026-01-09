@@ -25,4 +25,5 @@ public class TaskCreateDto {
     private String description;
     private QualificationLevel qualificationLevel;
     private Boolean active = true;
+    private Boolean defaultTask = false;
 }
