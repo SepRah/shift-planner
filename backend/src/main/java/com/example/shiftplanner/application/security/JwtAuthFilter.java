@@ -1,11 +1,13 @@
 package com.example.shiftplanner.application.security;
 
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.io.IOException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -21,10 +23,12 @@ import java.util.Set;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
+    private final AuthEntryPointJwt unauthorizedHandler;
 
     @Autowired
-    public JwtAuthFilter(JwtService jwtService) {
+    public JwtAuthFilter(JwtService jwtService, AuthEntryPointJwt unauthorizedHandler) {
         this.jwtService = jwtService;
+        this.unauthorizedHandler = unauthorizedHandler;
     }
 
     @Override
@@ -55,10 +59,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String username;
         try {
             username = jwtService.extractUsername(jwt);
-        } catch (Exception e) {
-            // invalid or expired token -> reject but do NOT crash
-            filterChain.doFilter(request, response);
-            return;
+        } catch (JwtException e) {
+            SecurityContextHolder.clearContext();
+            unauthorizedHandler.commence(
+                    request,
+                    response,
+                    new org.springframework.security.authentication.InsufficientAuthenticationException("JWT expired or invalid", e)
+            );
+            return; // IMPORTANT: stop the chain
         }
 
         // Only authenticate if not already authenticated

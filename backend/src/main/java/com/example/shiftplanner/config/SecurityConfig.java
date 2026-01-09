@@ -4,8 +4,8 @@ import com.example.shiftplanner.application.security.AuthEntryPointJwt;
 import com.example.shiftplanner.application.security.JwtAuthFilter;
 import com.example.shiftplanner.application.security.ShiftplannerUserDetailsService;
 import com.example.shiftplanner.infrastructure.UserRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -39,8 +39,6 @@ public class SecurityConfig {
 
     private final UserRepository userRepository;
 
-    @Autowired
-    private AuthEntryPointJwt unauthorizedHandler;
     // --- Password encoder ---
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -126,6 +124,11 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                        })
                 )
                 .authenticationProvider(authProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
