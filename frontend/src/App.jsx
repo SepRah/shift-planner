@@ -8,7 +8,9 @@ import UserDashboard from "./pages/UserDashboard.jsx";
 import UnauthorizedPage from "./pages/UnauthorizedPage.jsx";
 import ProtectedRoute from "./routes/ProtectedRoute.jsx";
 import ManagementLayout from "./routes/ManagementLayout.jsx";
-import ManagementPage from "./pages/ManagementPage.jsx";
+import ManagementPage from "./pages/UsersManagementPage.jsx";
+import UsersManagementPage from "./pages/UsersManagementPage.jsx";
+import TaskManagementPage from "./pages/TaskManagementPage.jsx";
 
 function App() {
     return (
@@ -36,7 +38,11 @@ function App() {
                     }
                 >
                     <Route path="/management" element={<ManagementLayout />}>
-                        <Route index element={<ManagementPage />} />
+                        {/*<Route index element={<ManagementPage />} />*/}
+                        {/* Default tab */}
+                        <Route index element={<Navigate to="users" replace />} />
+                        <Route path="users" element={<UsersManagementPage />} />
+                        <Route path="taskList" element={<TaskManagementPage />} />
                     </Route>
                 </Route>
 

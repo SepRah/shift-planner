@@ -4,6 +4,11 @@ import {changePassword, getAdjustedQualification, getMe} from "../api/userAccoun
 import LoadingSpinner from "../components/LoadingSpinner.jsx";
 import PasswordInput from "../components/PasswordInput.jsx";
 
+/**
+ * Creates the user dashboard page
+ * @return {JSX.Element}
+ * @constructor
+ */
 export default function UserDashboard(){
 
     const [profile, setProfile] = useState(null);

@@ -15,7 +15,7 @@ import {canManageStaffRoles, canManageUserRoles} from "../permissions/Management
 
 
 
-export default function ManagementPage() {
+export default function UsersManagementPage() {
     const { user: currentUser } = useAuth();
 
     const [users, setUsers] = useState([]);
