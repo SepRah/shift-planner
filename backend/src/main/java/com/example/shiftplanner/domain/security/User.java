@@ -14,7 +14,12 @@ import java.util.Collection;
 import java.util.Set;
 
 @Entity
-@Table(name = "app_user")
+@Table(
+        name = "app_user",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_app_user_username", columnNames = "username")
+        }
+)
 public class User implements UserDetails {
 
     @Id
