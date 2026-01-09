@@ -73,6 +73,10 @@ public class DatabaseInitializer {
             Set<UserRole> roles,
             StaffMember staffMember
     ) {
+        if (repo.existsByUsername(username)) {
+            System.out.println("Test user already exists, skipping: " + username);
+            return;
+        }
         try {
             User user = new User(
                     username,
