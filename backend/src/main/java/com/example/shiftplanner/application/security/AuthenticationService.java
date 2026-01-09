@@ -22,6 +22,8 @@ public class AuthenticationService {
 
     /**
      * Authenticates a user and returns a JWT.
+     * @param dto The user login request
+     * @return The authentification token
      */
     public AuthTokenDTO login(UserLoginRequestDTO dto) {
 

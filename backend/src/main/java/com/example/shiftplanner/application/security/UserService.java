@@ -56,6 +56,7 @@ public class UserService {
     /**
      * Registers a new user with the staff role "none".
      * @param dto the registration dto
+     * @return the registered user
      */
     @Transactional
     public User registerUser(UserRegistrationRequestDTO dto
