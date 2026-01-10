@@ -20,7 +20,7 @@
   </g>
 
   <!-- Text -->
-  <text x="80" y="52" font-size="32" font-family="Inter, Roboto, Arial, sans-serif" fill="#0F172A" font-weight="600">
-    ShiftPlanner
+  <text x="80" y="52" font-size="32" font-family="Inter, Roboto, Arial, sans-serif" fill="currentColor" font-weight="600">
+      ShiftPlanner
   </text>
 </svg>
