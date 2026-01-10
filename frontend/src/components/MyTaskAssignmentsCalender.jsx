@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -6,10 +6,11 @@ import interactionPlugin from "@fullcalendar/interaction";
 import {fetchTaskAssignmentsByStaffId} from "../api/taskApi.js";
 import {getMe} from "../api/userAccountApi.js";
 
-export default function TaskAssignmentList() {
+export default function TaskAssignmentList({calendarView, onViewDatesChange}) {
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const calendarRef = useRef(null);
 
 
     async function loadMyTaskAssignments() {
@@ -33,7 +34,20 @@ export default function TaskAssignmentList() {
     useEffect(() => {
         document.title = "My Tasks";
         loadMyTaskAssignments();
-    }, []);
+        if (calendarRef.current && calendarView) {
+            setTimeout(() => {
+                const api = calendarRef.current.getApi?.();
+                if (api) {
+                    if (api.view?.type !== calendarView) {
+                        api.changeView(calendarView);
+                    }
+                    if (onViewDatesChange && api.view) {
+                        onViewDatesChange({ start: api.view.activeStart, end: api.view.activeEnd });
+                    }
+                }
+            }, 0);
+        }
+    }, [calendarView, onViewDatesChange]);
 
     const events = useMemo(() => {
         return (items ?? [])
@@ -68,16 +82,24 @@ export default function TaskAssignmentList() {
 
 
     return (
-        <div style={{ width: "100%" }}>
+        <div style={{ flex: 1 }}>
             <FullCalendar
+                ref={calendarRef}
                 plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-                initialView="timeGridWeek"
-                firstDay={1}
-                scrollTime="07:00:00"
-                allDaySlot={false}
-                nowIndicator={true}
+                initialView={calendarView || "timeGridWeek"}
+                editable={true}
+                droppable={true}
                 events={events}
+                eventDrop={(info) => onEventDrop && onEventDrop(info.event)}
+                eventResize={(info) => onEventResize && onEventResize(info.event)}
+                datesSet={(info) => {
+                    if (onViewDatesChange) {
+                        onViewDatesChange({ start: info.start, end: info.end });
+                    }
+                }}
                 eventClick={handleEventClick}
+                allDaySlot={false}
+                eventResizableFromStart={true}
             />
         </div>
     );

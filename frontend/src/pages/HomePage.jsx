@@ -1,7 +1,12 @@
 import Navbar from "../components/Navbar";
 import MyTaskAssignmentsCalender from  "../components/MyTaskAssignmentsCalender.jsx"
+import React, {useState} from "react";
 
 export default function HomePage() {
+    const [calendarView, setCalendarView] = useState("timeGridWeek");
+    const [calendarDates, setCalendarDates] = useState({ start: null, end: null });
+
+
     return (
         <>
             <Navbar />
@@ -23,8 +28,16 @@ export default function HomePage() {
                         <h4 style={{ marginTop: 0, marginBottom: "12px" }}>
                             Assigned Tasks
                         </h4>
+                        <div className="calendar-view-controls" style={{ marginBottom: 12, display: 'flex', gap: 8 }}>
+                            <button onClick={() => setCalendarView("timeGridDay")} className={calendarView === "timeGridDay" ? "active" : ""}>Day</button>
+                            <button onClick={() => setCalendarView("timeGridWeek")} className={calendarView === "timeGridWeek" ? "active" : ""}>Week</button>
+                            <button onClick={() => setCalendarView("dayGridMonth")} className={calendarView === "dayGridMonth" ? "active" : ""}>Month</button>
+                        </div>
 
-                        <MyTaskAssignmentsCalender />
+                        <MyTaskAssignmentsCalender
+                            calendarView={calendarView}
+                            onViewDatesChange={setCalendarDates}
+                        />
                     </div>
                 </div>
             </div>
