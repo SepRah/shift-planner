@@ -33,18 +33,20 @@ export default function Navbar() {
                         </Link>
                     </li>
 
-                    <li className="nav-item">
-                        <Link className="nav-link" to="/planner">
-                            Planner
-                        </Link>
-                    </li>
-
                     {canAccessManagementArea(user) && (
-                        <li className="nav-item">
-                            <Link className="nav-link" to="/management">
-                                Management Area
-                            </Link>
-                        </li>
+                        <>
+                            <li className="nav-item">
+                                <Link className="nav-link" to="/planner">
+                                    Planner
+                                </Link>
+                            </li>
+
+                            <li className="nav-item">
+                                <Link className="nav-link" to="/management">
+                                    Management Area
+                                </Link>
+                            </li>
+                        </>
                     )}
                 </ul>
 
