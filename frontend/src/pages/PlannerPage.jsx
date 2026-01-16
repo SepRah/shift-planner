@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 /**
  * Generates a nice color for each staff member for calendar display.
  * @param {number|string} staffId - Staff ID
@@ -16,7 +16,7 @@ import StaffList from "../components/StaffList";
 import AssignmentOverviewPerStaff from "../components/AssignmentOverviewPerStaff";
 import AssignmentOverviewPerTask from "../components/AssignmentOverviewPerTask";
 import TaskList from "../components/TaskList";
-import { getTasks, createTask, updateTask, fetchAllTaskAssignments, updateTaskAssignment, getAllTasksInclInactive } from "../api/taskApi";
+import { getTasks, updateTask, fetchAllTaskAssignments, updateTaskAssignment, getAllTasksInclInactive } from "../api/taskApi";
 import { getStaffMembers } from "../api/staffApi";
 import Calendar from "../components/Calendar";
 import Navbar from "../components/Navbar";
@@ -34,7 +34,6 @@ export default function PlannerPage() {
   const [calendarView, setCalendarView] = useState("timeGridWeek");
   const [calendarDates, setCalendarDates] = useState({ start: null, end: null });
 
-  // Map staffId to color for calendar display
   const staffColorMap = useMemo(() => {
     const map = {};
     staff.forEach((s, idx) => {
@@ -47,6 +46,7 @@ export default function PlannerPage() {
    * Loads staff, tasks, and assignments from API when page loads.
    */
   useEffect(() => {
+    document.title = "Shiftplanner – Planner";
     getStaffMembers()
       .then(setStaff)
       .catch(() => setStaff([]));
@@ -131,7 +131,7 @@ export default function PlannerPage() {
         },
       });
     } catch {
-      alert("Fehler beim Aktualisieren des TaskAssignments!");
+      alert("Error of updating the TaskAssignments!");
     }
     
     const assignments = await fetchAllTaskAssignments();
@@ -155,7 +155,6 @@ export default function PlannerPage() {
     setAllTasksInclInactive(allInclInactive);
   };
 
-  // Handler für TaskAssignment nach Drag&Drop
   /**
    * Handler for assigning a task to staff (e.g. via drag & drop).
    * Optionally deactivates the task after assignment.
@@ -181,7 +180,7 @@ export default function PlannerPage() {
         }
       }
       if (!qualified) {
-        window.alert("Task kann nicht entfernt werden: Kein zugeordneter Mitarbeiter hat die erforderliche oder höhere Qualifikation.");
+        window.alert("Task can't be removed, minQualification of the task is not assigned to an employee.");
       } else {
         await deactivateTask(task);
       }
@@ -240,9 +239,9 @@ export default function PlannerPage() {
           </aside>
           <section className="planner-calendar-wrap">
             <div className="calendar-view-controls" style={{ marginBottom: 12, display: 'flex', gap: 8 }}>
-              <button onClick={() => setCalendarView("timeGridDay")} className={calendarView === "timeGridDay" ? "active" : ""}>Tag</button>
-              <button onClick={() => setCalendarView("timeGridWeek")} className={calendarView === "timeGridWeek" ? "active" : ""}>Woche</button>
-              <button onClick={() => setCalendarView("dayGridMonth")} className={calendarView === "dayGridMonth" ? "active" : ""}>Monat</button>
+              <button onClick={() => setCalendarView("timeGridDay")} className={calendarView === "timeGridDay" ? "active" : ""}>Day</button>
+              <button onClick={() => setCalendarView("timeGridWeek")} className={calendarView === "timeGridWeek" ? "active" : ""}>Week</button>
+              <button onClick={() => setCalendarView("dayGridMonth")} className={calendarView === "dayGridMonth" ? "active" : ""}>Month</button>
             </div>
             <Calendar
               events={events}

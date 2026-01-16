@@ -1,5 +1,3 @@
-import React from "react";
-
 
 /**
  * Overview of all assignments per staff member for the current calendar view.

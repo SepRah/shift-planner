@@ -1,5 +1,5 @@
 
-import React, { useRef, useEffect } from "react";
+import { useRef, useEffect } from "react";
 import { createTaskAssignment } from "../api/taskApi";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -31,7 +31,7 @@ export default function CalendarComponent({ events, onEventDrop, onEventResize, 
     }
   }, [tasks, selectedStaff]);
 
-  // Render event content with staff and task name
+
   function renderEventContent(eventInfo) {
     let staffFirstName = eventInfo.event.extendedProps.staffFirstName;
     let staffLastName = eventInfo.event.extendedProps.staffLastName;
@@ -55,7 +55,7 @@ export default function CalendarComponent({ events, onEventDrop, onEventResize, 
     );
   }
 
-  // Show event details on click
+
   function handleEventClick(info) {
     const { extendedProps } = info.event;
     let staffFirstName = extendedProps.staffFirstName;
@@ -74,12 +74,10 @@ export default function CalendarComponent({ events, onEventDrop, onEventResize, 
     alert(msg);
   }
 
-  // Find a task by ID
   function getTaskById(tasks, id) {
     return tasks && id ? tasks.find((t) => String(t.id) === String(id)) : undefined;
   }
 
-  // Switch calendar view and notify parent on view change
   useEffect(() => {
     if (calendarRef.current && calendarView) {
       setTimeout(() => {
@@ -117,7 +115,6 @@ export default function CalendarComponent({ events, onEventDrop, onEventResize, 
 
           const { taskId, staffId, staffName } = info.event.extendedProps;
 
-          // Set default end time if not set (+1 hour)
           let start = info.event.start;
           let end = info.event.end;
           if (!end && start) {

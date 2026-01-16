@@ -1,7 +1,6 @@
-
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import "../styles/SidebarLists.css";
-import { createTask, getQualificationLevels } from "../api/taskApi";
+import { getQualificationLevels } from "../api/taskApi";
 
 /**
  * TaskList component displays a scrollable list of tasks and a form to add new tasks.
@@ -25,11 +24,8 @@ export default function TaskList({
     paddingRight: 4
   };
 
-  // Remove a task (delegates qualification check to parent)
   const handleRemoveTask = (task) => {
-    if (onRemoveTask) {
-      onRemoveTask(task);
-    }
+    if (onRemoveTask) onRemoveTask(task);
   };
 
   const [newTaskName, setNewTaskName] = useState("");
@@ -37,11 +33,9 @@ export default function TaskList({
   const [qualificationLevels, setQualificationLevels] = useState([]);
   const [newTaskQualification, setNewTaskQualification] = useState("");
   const [removeAfterAssign, setRemoveAfterAssign] = useState(() => {
-    // Load value from localStorage for cross-component access
     const stored = localStorage.getItem("removeAfterAssign");
     return stored === null ? false : stored === "true";
   });
-  // Maps taskId to assigned staff info
   const [taskStaffMap, setTaskStaffMap] = useState({});
 
   useEffect(() => {
@@ -52,7 +46,6 @@ export default function TaskList({
     });
   }, []);
 
-  // Add a new task (calls onAddTask if provided, else falls back to legacy logic)
   const handleAddTask = async (e) => {
     e.preventDefault();
     if (!newTaskName.trim() || !newTaskQualification) return;
@@ -65,11 +58,6 @@ export default function TaskList({
     try {
       if (onAddTask) {
         await onAddTask(newTaskData);
-      } else {
-        await createTask(newTaskData);
-        if (onUpdateTask) {
-          onUpdateTask();
-        }
       }
       setNewTaskName("");
       setNewTaskDescription("");
@@ -79,7 +67,6 @@ export default function TaskList({
     }
   };
 
-  // Assign staff to a task when clicked
   const handleTaskClick = (task) => {
     if (selectedStaff) {
       let staffName = "";

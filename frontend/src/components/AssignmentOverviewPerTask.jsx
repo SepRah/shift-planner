@@ -1,4 +1,3 @@
-import React from "react";
 
 /**
  * Overview of all assignments per task for the current calendar view.

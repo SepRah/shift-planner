@@ -3,11 +3,9 @@ import React, { useEffect, useState } from "react";
 import TaskList from "../components/TaskList";
 import { createTask, updateTask, getAllTasksInclInactive } from "../api/taskApi";
 
-
 export default function TaskManagementPage() {
     const [tasks, setTasks] = useState([]);
 
-    // Load all tasks (active and inactive)
     const reloadTasks = async () => {
         try {
             const allTasks = await getAllTasksInclInactive();
@@ -21,7 +19,6 @@ export default function TaskManagementPage() {
         reloadTasks();
     }, []);
 
-    // Create a new default task
     const handleAddTask = async (taskData) => {
         try {
             const newTask = {
@@ -34,51 +31,50 @@ export default function TaskManagementPage() {
             await createTask(newTask);
             reloadTasks();
         } catch (err) {
-            alert("Fehler beim Erstellen des Tasks.");
+            alert("Error creating task");
         }
     };
 
-    // Toggle active status for a task
     const handleToggleActive = async (task) => {
         if (!task || !task.id) return;
         try {
             await updateTask(task.id, { ...task, active: !task.active });
             reloadTasks();
         } catch (err) {
-            alert("Status - Update fehlgeschlagen");
+            alert("Status - Update failed");
         }
     };
 
-        const defaultTasks = tasks.filter(t => t.defaultTask);
-        const nonDefaultTasks = tasks.filter(t => !t.defaultTask);
+    const defaultTasks = tasks.filter(t => t.defaultTask);
+    const nonDefaultTasks = tasks.filter(t => !t.defaultTask);
 
-        return (
-            <div>
-                <h2>Task Management</h2>
-                <p>Hier kannst du neue Default - Tasks erstellen.</p>
+    return (
+        <div>
+            <h2>Task management</h2>
+            <p>Here you can create your default tasks or reactivate old ones.</p>
 
-                <h3>Default Tasks</h3>
-                        <TaskList
-                            tasks={defaultTasks}
-                            onAddTask={handleAddTask}
-                            onToggleActive={handleToggleActive}
-                            showActiveToggle={true}
-                            showRemoveAfterAssign={false}
-                            showOnlyActive={false}
-                            defaultTask={true}
-                        />
+            <h3>Default tasks</h3>
+            <TaskList
+                tasks={defaultTasks}
+                onAddTask={handleAddTask}
+                onToggleActive={handleToggleActive}
+                showActiveToggle={true}
+                showRemoveAfterAssign={false}
+                showOnlyActive={false}
+                defaultTask={true}
+            />
 
-                <hr style={{ margin: '32px 0', border: 0, borderTop: '2px solid #e3e8ee' }} />
+            <hr style={{ margin: '32px 0', border: 0, borderTop: '2px solid #e3e8ee' }} />
 
-                <h3>Weitere Tasks</h3>
-                        <TaskList
-                            tasks={nonDefaultTasks}
-                            onToggleActive={handleToggleActive}
-                            showActiveToggle={true}
-                            showRemoveAfterAssign={false}
-                            showOnlyActive={false}
-                            hideAddForm={true}
-                        />
-            </div>
-        );
+            <h3>Further tasks</h3>
+            <TaskList
+                tasks={nonDefaultTasks}
+                onToggleActive={handleToggleActive}
+                showActiveToggle={true}
+                showRemoveAfterAssign={false}
+                showOnlyActive={false}
+                hideAddForm={true}
+            />
+        </div>
+    );
 }
