@@ -1,5 +1,40 @@
 import { useEffect, useState, useMemo } from "react";
+
+import StaffList from "../components/StaffList";
+import AssignmentOverviewPerStaff from "../components/AssignmentOverviewPerStaff";
+import AssignmentOverviewPerTask from "../components/AssignmentOverviewPerTask";
+import TaskList from "../components/TaskList";
+import { getTasks, updateTask, fetchAllTaskAssignments, updateTaskAssignment, getAllTasksInclInactive, updateTaskActiveStatus } from "../api/taskApi";
+import { getStaffMembers } from "../api/staffApi";
+import Calendar from "../components/Calendar";
+import Navbar from "../components/Navbar";
+import "../styles/PlannerPage.css";
+
+
 /**
+ * Maps backend assignments to FullCalendar event objects.
+ * @param {Array} assignments
+ * @returns {Array}
+ */
+function mapAssignmentsToEvents(assignments) {
+  return assignments.map((a) => ({
+    id: a.id,
+    title: a.taskName || '',
+    start: a.timeRange?.start,
+    end: a.timeRange?.end,
+    extendedProps: {
+      assignmentId: a.id,
+      staffId: a.staffId,
+      staffFirstName: a.staffFirstName,
+      staffLastName: a.staffLastName,
+      taskId: a.taskId,
+      taskName: a.taskName,
+      taskDescription: a.taskDescription,
+    },
+  }));
+}
+
+  /**
  * Generates a nice color for each staff member for calendar display.
  * @param {number|string} staffId - Staff ID
  * @param {number} index - Index in staff array
@@ -12,15 +47,6 @@ function getStaffColor(staffId, index) {
   ];
   return palette[index % palette.length];
 }
-import StaffList from "../components/StaffList";
-import AssignmentOverviewPerStaff from "../components/AssignmentOverviewPerStaff";
-import AssignmentOverviewPerTask from "../components/AssignmentOverviewPerTask";
-import TaskList from "../components/TaskList";
-import { getTasks, updateTask, fetchAllTaskAssignments, updateTaskAssignment, getAllTasksInclInactive } from "../api/taskApi";
-import { getStaffMembers } from "../api/staffApi";
-import Calendar from "../components/Calendar";
-import Navbar from "../components/Navbar";
-import "../styles/PlannerPage.css";
 
 /**
  * Main planner page: shows staff, tasks, calendar, and assignment overviews.
@@ -135,22 +161,7 @@ export default function PlannerPage() {
     }
     
     const assignments = await fetchAllTaskAssignments();
-    const mappedEvents = assignments.map((a) => ({
-      id: a.id,
-      title: a.taskName || '',
-      start: a.timeRange?.start,
-      end: a.timeRange?.end,
-      extendedProps: {
-        assignmentId: a.id,
-        staffId: a.staffId,
-        staffFirstName: a.staffFirstName,
-        staffLastName: a.staffLastName,
-        taskId: a.taskId,
-        taskName: a.taskName,
-        taskDescription: a.taskDescription,
-      },
-    }));
-    setEvents(mappedEvents);
+    setEvents(mapAssignmentsToEvents(assignments));
     const allInclInactive = await getAllTasksInclInactive();
     setAllTasksInclInactive(allInclInactive);
   };
@@ -187,22 +198,7 @@ export default function PlannerPage() {
     }
     
     const assignments = await fetchAllTaskAssignments();
-    const mappedEvents = assignments.map((a) => ({
-      id: a.id,
-      title: a.taskName || '',
-      start: a.timeRange?.start,
-      end: a.timeRange?.end,
-      extendedProps: {
-        assignmentId: a.id,
-        staffId: a.staffId,
-        staffFirstName: a.staffFirstName,
-        staffLastName: a.staffLastName,
-        taskId: a.taskId,
-        taskName: a.taskName,
-        taskDescription: a.taskDescription,
-      },
-    }));
-    setEvents(mappedEvents);
+    setEvents(mapAssignmentsToEvents(assignments));
     const allInclInactive = await getAllTasksInclInactive();
     setAllTasksInclInactive(allInclInactive);
   };
@@ -223,7 +219,18 @@ export default function PlannerPage() {
               onClick={async () => {
 
                 const toActivate = allTasksInclInactive.filter(t => t.defaultTask && !t.active);
-                await Promise.all(toActivate.map(t => updateTask(t.id, { active: true })));
+
+                await Promise.all(toActivate.map(async t => {
+                  try {
+                    await updateTaskActiveStatus(t.id, true);
+                  } catch (err) {
+                    if (err.response) {
+                      console.error('Update failed for task', t.id, 'Response:', err.response.data);
+                    } else {
+                      console.error('Update failed for task', t.id, err);
+                    }
+                  }
+                }));
 
                 getTasks().then(setTasks);
                 getAllTasksInclInactive().then(setAllTasksInclInactive);

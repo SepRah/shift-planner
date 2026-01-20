@@ -60,4 +60,12 @@ public class TaskService {
                 .map(TaskMapper::toDto)
                 .collect(Collectors.toList());
     }
+
+    public TaskResponseDto updateActiveStatus(Long id, Boolean active) {
+        Task task = taskRepository.findById(id)
+                .orElseThrow(TaskNotFoundException::new);
+        task.setActive(active != null ? active : false);
+        task = taskRepository.save(task);
+        return TaskMapper.toDto(task);
+    }
 }

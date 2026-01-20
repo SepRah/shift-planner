@@ -140,12 +140,21 @@ export default function CalendarComponent({ events, onEventDrop, onEventResize, 
               const removeAfterAssign = localStorage.getItem("removeAfterAssign") === "true";
               if (onTaskAssigned) await onTaskAssigned(assignment, task, removeAfterAssign);
             } catch (err) {
-              alert("TaskAssignment konnte nicht erstellt werden!");
+              alert("TaskAssignment failed!");
             } finally {
               window.__assignmentInProgress = false;
             }
           } else {
-            alert("Bitte zuerst einen Mitarbeiter auswählen und dann Task ziehen!");
+            if (!window.__noStaffAlerted) {
+              window.__noStaffAlerted = true;
+              setTimeout(() => { window.__noStaffAlerted = false; }, 500);
+              setTimeout(() => {
+                if (window.__noStaffAlerted) {
+                  alert("Please select a staff member before assigning a task.");
+                  window.__noStaffAlerted = false;
+                }
+              }, 10);
+            }
           }
         }}
         eventContent={renderEventContent}

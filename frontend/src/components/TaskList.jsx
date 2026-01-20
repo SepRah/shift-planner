@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import "../styles/SidebarLists.css";
-import { getQualificationLevels } from "../api/taskApi";
+import {createTask, getQualificationLevels } from "../api/taskApi";
 
 /**
  * TaskList component displays a scrollable list of tasks and a form to add new tasks.
@@ -49,22 +49,26 @@ export default function TaskList({
   const handleAddTask = async (e) => {
     e.preventDefault();
     if (!newTaskName.trim() || !newTaskQualification) return;
-    const newTaskData = {
-      name: newTaskName,
-      description: newTaskDescription,
-      qualificationLevel: newTaskQualification,
-      ...(typeof defaultTask === 'boolean' ? { defaultTask } : {}),
-    };
-    try {
-      if (onAddTask) {
-        await onAddTask(newTaskData);
+      const newTaskData = {
+          name: newTaskName,
+          description: newTaskDescription,
+          qualificationLevel: newTaskQualification,
+      };
+      try {
+          if (onAddTask) {
+              await onAddTask(newTaskData);
+          } else {
+              await createTask(newTaskData);
+              if (onUpdateTask) {
+                  onUpdateTask();
+              }
+          }
+          setNewTaskName("");
+          setNewTaskDescription("");
+          setNewTaskQualification(qualificationLevels[0] || "");
+      } catch (err) {
+          alert("Error adding task.");
       }
-      setNewTaskName("");
-      setNewTaskDescription("");
-      setNewTaskQualification(qualificationLevels[0] || "");
-    } catch (err) {
-      alert("Error adding task.");
-    }
   };
 
   const handleTaskClick = (task) => {

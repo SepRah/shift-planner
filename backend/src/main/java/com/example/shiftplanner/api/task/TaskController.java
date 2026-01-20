@@ -67,4 +67,13 @@ public class TaskController {
     public void delete(@PathVariable Long id) {
         taskService.delete(id);
     }
+
+    @PatchMapping("/{id}/status")
+    public TaskResponseDto updateActiveStatus(@PathVariable Long id, @RequestBody java.util.Map<String, Object> statusPayload) {
+    if (!statusPayload.containsKey("active")) {
+        throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "Missing 'active' field");
+    }
+    Boolean active = Boolean.valueOf(String.valueOf(statusPayload.get("active")));
+    return taskService.updateActiveStatus(id, active);
+    }
 }

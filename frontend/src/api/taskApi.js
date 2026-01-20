@@ -1,3 +1,4 @@
+
 import api from "./axios.js";
 
 /**
@@ -26,6 +27,15 @@ export const getAllTasksInclInactive = () => api.get("/api/tasks/all").then(res 
  * @returns {Promise<Object>} The created task
  */
 export const createTask = (task) => api.post("/api/tasks", task).then(res => res.data);
+
+/**
+ * Updates only the active status of a task via the API.
+ * @param {number|string} id - The ID of the task to update
+ * @param {boolean} active - The new active status
+ * @returns {Promise<Object>} The updated task
+ */
+export const updateTaskActiveStatus = (id, active) =>
+api.patch(`/api/tasks/${id}/status`, { active }).then(res => res.data);
 
 /**
  * Updates an existing task via the API.
